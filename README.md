@@ -141,3 +141,6 @@ TBD (local development uses JSON files)
 - Dana: 617-901-1450, dalzahed@bu.edu  
 - Ming: 415-996-5446, soongming18@gmail.com  
 - Josh: 917-376-4766, jhsualva@bu.edu
+
+**Plan PDF**:
+https://docs.google.com/document/d/1S-pkiME5mpSl4LjW3-oMaZRR3N4QtPy0eBoPkBK5dTw/edit?usp=sharing
