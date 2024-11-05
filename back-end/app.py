@@ -31,6 +31,7 @@ def get_events():
     return jsonify(event_list)
 
 # create event (wip)
+@app.route('/api/events', methods=['POST'])
 def create_event():
     data = request.get_json()
     
