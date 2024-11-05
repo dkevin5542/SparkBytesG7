@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import Navbar from "./components/navbar";
+//import Navbar from "./components/navbar";
 import EventList from "./components/eventlist";
 import '@/app/styles/page.css';
 
@@ -12,7 +12,6 @@ export default function Home() {
 
   return (
     <div className="home-page">
-      <Navbar />
       <div className="content">
         <EventList events={events} />
       </div>

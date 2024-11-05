@@ -1,11 +1,13 @@
+"use client"; 
+
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/navbar.css';
 
-export const Navbar = () => {
+export const Navbar: React.FC = () => {
   const router = useRouter();
 
-  const handleNavigation = (path) => {
+  const handleNavigation = (path: string) => {
     router.push(path);
   };
 
@@ -13,10 +15,11 @@ export const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-brand" onClick={() => handleNavigation('/')}>Spark Bytes</div>
       <ul className="navbar-links">
-        <li><a onClick={() => handleNavigation('/')}>Home</a></li>
-        <li><a onClick={() => handleNavigation('/events')}>Events</a></li>
-        <li><a onClick={() => handleNavigation('/create-event')}>Create Event</a></li>
-        <li><a onClick={() => handleNavigation('/contact')}>Contact</a></li>
+        <li><button onClick={() => handleNavigation('/')}>Home</button></li>
+        <li><button onClick={() => handleNavigation('/about')}>About</button></li> {/* Corrected route */}
+        <li><button onClick={() => handleNavigation('/events')}>Events</button></li>
+        <li><button onClick={() => handleNavigation('/create-event')}>Create Event</button></li>
+        <li><button onClick={() => handleNavigation('/contact')}>Contact</button></li>
       </ul>
     </nav>
   );
