@@ -2,29 +2,43 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 25px 40px; 
   background-color: #007bff;
   color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  border-radius: 8px;
   margin-bottom: 20px;
+}
+
+.navbar-brand {
+  font-size: 2em; 
+  font-weight: bold;
+  color: white;
   cursor: pointer;
 }
-.navbar-brand {
-  font-size: 1.5em;
-  font-weight: bold;
-}
+
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 25px; 
 }
-.navbar-links li a {
+
+.navbar-links li {
+  display: flex;
+}
+
+.navbar-links li button {
+  background: none;
+  border: none;
   color: white;
-  text-decoration: none;
-  transition: color 0.3s;
+  font-size: 1.2em; 
+  padding: 12px 20px; 
+  transition: all 0.3s ease;
   cursor: pointer;
+  border-radius: 6px;
 }
-.navbar-links li a:hover {
+
+.navbar-links li button:hover {
+  background-color: #0056b3;
   color: #d1e7ff;
 }
