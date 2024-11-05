@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ export const Navbar: React.FC = () => {
       <div className="navbar-brand" onClick={() => handleNavigation('/')}>Spark Bytes</div>
       <ul className="navbar-links">
         <li><button onClick={() => handleNavigation('/')}>Home</button></li>
-        <li><button onClick={() => handleNavigation('/about')}>About</button></li> {/* Corrected route */}
+        <li><button onClick={() => handleNavigation('/about')}>About</button></li>
         <li><button onClick={() => handleNavigation('/events')}>Events</button></li>
         <li><button onClick={() => handleNavigation('/create-event')}>Create Event</button></li>
         <li><button onClick={() => handleNavigation('/contact')}>Contact</button></li>
