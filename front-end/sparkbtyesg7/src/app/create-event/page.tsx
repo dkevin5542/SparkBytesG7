@@ -1,20 +1,24 @@
 "use client";
 import React, { useState } from 'react';
-import Navbar from "../components/navbar";
 import CreateEventForm from "../components/eventform";
 import '@/app/styles/page.css';
 
-export default function CreateEventPage() {
-  const [events, setEvents] = useState([]);
+interface Event {
+  title: string;
+  date: string;
+  location: string;
+}
 
-  const handleCreateEvent = (newEvent) => {
+export default function CreateEventPage() {
+  const [events, setEvents] = useState<Event[]>([]);
+
+  const handleCreateEvent = (newEvent: Event) => {
     setEvents([...events, newEvent]);
     console.log("Event Created: ", newEvent);
   };
 
   return (
     <div className="create-event-page">
-      <Navbar />
       <div className="content">
         <CreateEventForm onCreate={handleCreateEvent} />
       </div>
