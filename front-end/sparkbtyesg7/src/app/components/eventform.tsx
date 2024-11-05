@@ -1,21 +1,44 @@
 import React from 'react';
 import '@/app/styles/eventform.css';
 
-
-
-export const CreateEventForm = ({ onCreate }) => {
+export const CreateEventForm = () => {
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [date, setDate] = React.useState('');
   const [location, setLocation] = React.useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onCreate({ title, description, date, location });
-    setTitle('');
-    setDescription('');
-    setDate('');
-    setLocation('');
+    
+    const eventData = {
+        title,
+        description,
+        date,
+        location
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/events', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(eventData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setTitle('');
+        setDescription('');
+        setDate('');
+        setLocation('');
+      } else {
+        console.error('Failed to create event');
+      }
+    } catch (error) {
+        console.error("Error creating event:", error);
+    }
   };
 
   return (
