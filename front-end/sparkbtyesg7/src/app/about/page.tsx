@@ -1,4 +1,5 @@
 import React from 'react';
+import '../globals.css'; 
 
 const About: React.FC = () => {
   return (
