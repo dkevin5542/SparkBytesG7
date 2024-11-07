@@ -64,6 +64,72 @@ def create_event():
 
     return jsonify({'message': 'Event created successfully', 'event_id': event_id}), 201
 
+# RSVP to event
+@app.route('/api/rsvp', methods=['POST'])
+def rsvp_event():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    event_id = data.get('event_id')
+    rsvp_status = data.get('rsvp_status', 'Yes')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO RSVP (user_id, event_id, rsvp_status)
+        VALUES (?, ?, ?)
+        """,
+        (user_id, event_id, rsvp_status)
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'RSVP successful'}), 201
+
+# Favorite event
+@app.route('/api/favorites', methods=['POST'])
+def favorite_event():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    event_id = data.get('event_id')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Favorite (user_id, event_id)
+        VALUES (?, ?)
+        """,
+        (user_id, event_id)
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Event added to bookmarks'}), 201
+
+# Provide review for an event
+@app.route('/api/review', methods=['POST'])
+def give_feedback():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    event_id = data.get('event_id')
+    rating = data.get('rating')
+    comment = data.get('comment', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Review (user_id, event_id, rating, comment)
+        VALUES (?, ?, ?, ?)
+        """,
+        (user_id, event_id, rating, comment)
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Feedback submitted'}), 201
+
 # test for working api
 @app.route('/api/data', methods=['GET'])
 def get_data():
