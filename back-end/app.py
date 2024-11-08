@@ -14,61 +14,76 @@ GOOGLE_CLIENT_ID = '321219727339-nkudni5e54m7sjbtec1433ofod519f1r.apps.googleuse
 
 # get connection
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    try:
+        conn = sqlite3.connect('database.db')
+        conn.row_factory = sqlite3.Row
+        return conn
+    except sqlite3.Error as e:
+        raise RuntimeError(f"Database connection error: {e}")
 
 # retrieve users
 @app.route('/api/users', methods=['GET'])
 def get_users():
-    conn = get_db_connection()
-    users = conn.execute('SELECT * FROM User').fetchall()
-    conn.close()
-    user_list = [dict(row) for row in users]
-    return jsonify(user_list)
+    try:
+        conn = get_db_connection()
+        users = conn.execute('SELECT * FROM User').fetchall()
+        conn.close()
+        user_list = [dict(row) for row in users]
+        return jsonify(user_list), 200
+    except sqlite3.Error as e:
+        return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
 # retrieve events
 @app.route('/api/events', methods=['GET'])
 def get_events():
-    conn = get_db_connection()
-    events = conn.execute('SELECT * FROM Event').fetchall()
-    conn.close()
-    event_list = [dict(row) for row in events]
-    return jsonify(event_list)
+    try:
+        conn = get_db_connection()
+        events = conn.execute('SELECT * FROM Event').fetchall()
+        conn.close()
+        event_list = [dict(row) for row in events]
+        return jsonify(event_list), 200
+    except sqlite3.Error as e:
+        return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
 # create event (wip)
 @app.route('/api/events', methods=['POST'])
 def create_event():
-    data = request.get_json()
-    
-    # current fields
-    title = data.get('title')
-    description = data.get('description')
-    event_date = data.get('date')
-    location = data.get('location')
+    try:
+        data = request.get_json()
+        
+        # current fields
+        title = data.get('title')
+        description = data.get('description')
+        event_date = data.get('date')
+        location = data.get('location')
 
-    # unimplemented fields with default values
-    user_id = data.get('user_id', 1)
-    food_type = data.get('food_type', 'Snacks')
-    address = data.get('address', 'N/A')
-    start_time = data.get('start_time', '00:00:00')
-    end_time = data.get('end_time', '23:59:59')
+        if not title or not description or not event_date or not location:
+            return jsonify({'error': 'Missing required fields'}), 400
 
-    # insert to database
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO Event (user_id, title, description, food_type, location, address, event_date, start_time, end_time)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (user_id, title, description, food_type, location, address, event_date, start_time, end_time)
-    )
-    conn.commit()
-    event_id = cursor.lastrowid
-    conn.close()
+        # unimplemented fields with default values
+        user_id = data.get('user_id', 1)
+        food_type = data.get('food_type', 'Snacks')
+        address = data.get('address', 'N/A')
+        start_time = data.get('start_time', '00:00:00')
+        end_time = data.get('end_time', '23:59:59')
 
-    return jsonify({'message': 'Event created successfully', 'event_id': event_id}), 201
+        # insert to database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO Event (user_id, title, description, food_type, location, address, event_date, start_time, end_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (user_id, title, description, food_type, location, address, event_date, start_time, end_time)
+        )
+        conn.commit()
+        event_id = cursor.lastrowid
+        conn.close()
+
+        return jsonify({'message': 'Event created successfully', 'event_id': event_id}), 201
+    except sqlite3.Error as e:
+            return jsonify({'error': 'Failed to create event', 'details': str(e)}), 500
 
 # RSVP to event
 @app.route('/api/rsvp', methods=['POST'])
@@ -78,19 +93,22 @@ def rsvp_event():
     event_id = data.get('event_id')
     rsvp_status = data.get('rsvp_status', 'Yes')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO RSVP (user_id, event_id, rsvp_status)
-        VALUES (?, ?, ?)
-        """,
-        (user_id, event_id, rsvp_status)
-    )
-    conn.commit()
-    conn.close()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO RSVP (user_id, event_id, rsvp_status)
+            VALUES (?, ?, ?)
+            """,
+            (user_id, event_id, rsvp_status)
+        )
+        conn.commit()
+        conn.close()
 
-    return jsonify({'message': 'RSVP successful'}), 201
+        return jsonify({'message': 'RSVP successful'}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Failed to RSVP', 'details': str(e)}), 500
 
 # Favorite event
 @app.route('/api/favorites', methods=['POST'])
@@ -99,19 +117,22 @@ def favorite_event():
     user_id = data.get('user_id')
     event_id = data.get('event_id')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO Favorite (user_id, event_id)
-        VALUES (?, ?)
-        """,
-        (user_id, event_id)
-    )
-    conn.commit()
-    conn.close()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO Favorite (user_id, event_id)
+            VALUES (?, ?)
+            """,
+            (user_id, event_id)
+        )
+        conn.commit()
+        conn.close()
 
-    return jsonify({'message': 'Event added to bookmarks'}), 201
+        return jsonify({'message': 'Event added to bookmarks'}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Failed to add favorite', 'details': str(e)}), 500
 
 # Provide review for an event
 @app.route('/api/review', methods=['POST'])
@@ -122,19 +143,25 @@ def give_feedback():
     rating = data.get('rating')
     comment = data.get('comment', '')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO Review (user_id, event_id, rating, comment)
-        VALUES (?, ?, ?, ?)
-        """,
-        (user_id, event_id, rating, comment)
-    )
-    conn.commit()
-    conn.close()
+    if not user_id or not event_id or rating is None:
+        return jsonify({'error': 'Missing required fields: user_id, event_id, or rating'}), 400
 
-    return jsonify({'message': 'Feedback submitted'}), 201
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO Review (user_id, event_id, rating, comment)
+            VALUES (?, ?, ?, ?)
+            """,
+            (user_id, event_id, rating, comment)
+        )
+        conn.commit()
+        conn.close()
+
+        return jsonify({'message': 'Feedback submitted'}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Failed to submit feedback', 'details': str(e)}), 500
 
 # Google login
 @app.route('/api/google-login', methods=['POST'])
