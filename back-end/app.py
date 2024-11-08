@@ -3,8 +3,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 
+#google oauth
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 app = Flask(__name__)
 CORS(app)
+
+GOOGLE_CLIENT_ID = '321219727339-nkudni5e54m7sjbtec1433ofod519f1r.apps.googleusercontent.com'
 
 # get connection
 def get_db_connection():
@@ -129,6 +135,56 @@ def give_feedback():
     conn.close()
 
     return jsonify({'message': 'Feedback submitted'}), 201
+
+# Google login
+@app.route('/api/google-login', methods=['POST'])
+def google_login():
+    # Get the token from the frontend
+    data = request.get_json()
+    token = data.get('token')
+
+    try:
+        # Verify the token with Google's OAuth2 API
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
+
+        # Check if the token is issued by Google
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            return jsonify({'message': 'Wrong issuer.'}), 401
+
+        # Token is valid; extract user information
+        user_id = idinfo['sub']
+        email = idinfo['email']
+        name = idinfo.get('name', 'Anonymous')
+
+        # Check if user exists, if not, create a new user
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM User WHERE google_id = ?", (user_id,))
+        user = cursor.fetchone()
+
+        if not user:
+            cursor.execute(
+                """
+                INSERT INTO User (email, diet, preferred_language, role)
+                VALUES (?, 'Omnivore', 'English', 'Student')
+                """,
+                (email,)
+            )
+            conn.commit()
+            user_id = cursor.lastrowid
+        else:
+            user_id = user['id']
+
+        conn.close()
+
+        return jsonify({
+            'message': 'Login successful',
+            'user_id': user_id,
+            'email': email
+        }), 200
+
+    except ValueError:
+        return jsonify({'message': 'Invalid token'}), 401
 
 # test for working api
 @app.route('/api/data', methods=['GET'])
