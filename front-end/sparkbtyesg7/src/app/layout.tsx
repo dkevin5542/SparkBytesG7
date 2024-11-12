@@ -4,6 +4,33 @@ import localFont from "next/font/local";
 import "./globals.css";
 import React from 'react';
 
+/**
+ * Layout Component
+ *
+ * Defines the root layout for the Spark Bytes application.
+ *
+ * Purpose:
+ * - Sets up the global layout for pages, including a shared Navbar and font styles.
+ * - Applies custom local fonts (Geist Sans and Geist Mono) using CSS variables.
+ * - Provides metadata like the app's title and description.
+ *
+ * Features:
+ * - Displays a Navbar at the top of every page.
+ * - Uses custom local fonts and applies them via CSS variables.
+ * - Wraps all child components in a consistent layout with padding.
+ *
+ * Metadata:
+ * - 'title': Sets the default page title.
+ * - 'description': Provides a brief description of the app.
+ *
+ * Usage:
+ * Used as the default layout for all pages in the app.
+ *
+ * Styling:
+ * - Global CSS is imported from 'globals.css'.
+ * - Applies fonts through CSS variables set on the 'body' element.
+ */
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",

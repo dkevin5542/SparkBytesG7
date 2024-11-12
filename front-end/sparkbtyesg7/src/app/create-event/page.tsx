@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Using client-side features in Next.js
 import React, { useState } from 'react';
 import CreateEventForm from "../components/eventform";
 import '@/app/styles/formpage.css';
@@ -8,6 +8,35 @@ interface Event {
   date: string;
   location: string;
 }
+
+/**
+ * CreateEventPage Component
+ *
+ * Provides a page for users to create new events.
+ * 
+ * Purpose:
+ * - Displays a form for creating events.
+ * - Keeps track of the events users create.
+ * - Shows a success message when an event is added.
+ *
+ * Features
+ * - Uses 'CreateEventForm' to handle event input.
+ * - Stores a list of events in the component's state.
+ * - Automatically clears feedback messages after 3 seconds.
+ *
+ * State:
+ * - 'events': Stores the list of created events.
+ * - 'message': Displays a temporary success message after creating an event.
+ *
+ * Functions:
+ * 'handleCreateEvent': Adds a new event to the list and shows a success message.
+ *
+ * Usage:
+ * Included in the application to provide an event creation page.
+ *
+ * Styling:
+ * Uses styles from 'formpage.css'.
+ */
 
 export default function CreateEventPage() {
   const [events, setEvents] = useState<Event[]>([]);
