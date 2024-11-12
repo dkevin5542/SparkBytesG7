@@ -39,9 +39,11 @@ export const Navbar: React.FC = () => {
       <ul className="navbar-links">
         <li><button onClick={() => handleNavigation('/')}>HOME</button></li>
         <li><button onClick={() => handleNavigation('/about')}>ABOUT</button></li> {/* Corrected route */}
-        <li><button onClick={() => handleNavigation('/events')}>EVENTS</button></li>
         <li><button onClick={() => handleNavigation('/create-event')}>CREATE EVENT</button></li>
+        <li><button onClick={() => handleNavigation('/events')}>EVENTS</button></li>
         <li><button onClick={() => handleNavigation('/contact')}>CONTACT</button></li>
+        <li><button onClick={() => handleNavigation('/login')}>Login</button></li>
+
       </ul>
     </nav>
   );
