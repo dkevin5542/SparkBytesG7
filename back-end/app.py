@@ -10,7 +10,7 @@ from google.auth.transport import requests
 app = Flask(__name__)
 CORS(app)
 
-GOOGLE_CLIENT_ID = '321219727339-nkudni5e54m7sjbtec1433ofod519f1r.apps.googleusercontent.com'
+GOOGLE_CLIENT_ID = '140220835320-hp2l5648gotpt7u322qks2eaf7k8ggvn.apps.googleusercontent.com'
 
 # get connection
 def get_db_connection():
@@ -212,6 +212,33 @@ def google_login():
 
     except ValueError:
         return jsonify({'message': 'Invalid token'}), 401
+
+# Route to update user preferences
+@app.route('/api/update_preferences', methods=['PUT'])
+def update_preferences():
+    try:
+        data = request.get_json()
+        diet = data.get('diet')
+        preferred_language = data.get('preferred_language')
+        
+        if not diet or not preferred_language:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update user preferences
+        cursor.execute(
+            "UPDATE User SET diet = ?, preferred_language = ? WHERE user_id = ?",
+            (diet, preferred_language, request.user_id)
+        )
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "User preferences updated successfully"}), 200
+    except sqlite3.Error as e:
+        return jsonify({"error": "Database error occurred", "details": str(e)}), 500
 
 # test for working api
 @app.route('/api/data', methods=['GET'])
