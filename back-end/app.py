@@ -269,7 +269,7 @@ def give_feedback():
 @app.route('/api/google-login', methods=['POST'])
 def google_login():
     """
-    Handles Google OAuth login.
+    Handles Google OAuth login. Only @bu.edu domains will be allowed to log into the service.
 
     Expected JSON Payload:
     {
@@ -298,6 +298,10 @@ def google_login():
         google_user_id = idinfo['sub']
         email = idinfo['email']
         name = idinfo.get('name', 'Anonymous')
+
+        # Validate that the email ends with '@bu.edu'
+        if not email.lower().endswith('@bu.edu'):
+            return jsonify({'message': 'Unauthorized domain, only @bu.edu emails are allowed.'})
 
         # Check if user exists, if not, create a new user
         with get_db_connection() as conn:
