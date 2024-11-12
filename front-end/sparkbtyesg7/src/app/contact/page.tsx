@@ -1,6 +1,24 @@
-// src/pages/contact.tsx
-
 import React from 'react';
+
+/**
+ * Contact Component
+ *
+ * Displays the "Contact Us" page for the Spark Bytes application.
+ * 
+ * Purpose:
+ * - Provides contact information for the Spark Bytes team.
+ * - Allows users to reach out for questions or assistance.
+ *
+ * Usage:
+ * Added to the "Contact" page to give users easy access to team contact details.
+ *
+ * Features:
+ * - Lists team members along with their phone numbers and email addresses.
+ * - Includes clickable email links.
+ *
+ * Styling:
+ * Inline padding for consistent spacing.
+ */
 
 const Contact: React.FC = () => {
   return (
@@ -17,4 +35,5 @@ const Contact: React.FC = () => {
   );
 };
 
+/* Exporting to use in other parts of the application */
 export default Contact;

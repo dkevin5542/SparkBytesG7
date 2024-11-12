@@ -1,0 +1,50 @@
+.create-event-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.create-event-page h1, .create-event-page h2 {
+    color: #333;
+}
+
+.feedback-message {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+}
+
+.event-list {
+    margin-top: 2rem;
+}
+
+.event-item {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    background-color: #fafafa;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.event-item h3 {
+    margin: 0;
+    color: #4a90e2;
+}
+
+.event-item p {
+    margin: 0.5rem 0;
+}
+
+.empty-state {
+    color: #888;
+    font-style: italic;
+}
+
+h1 {
+    text-align: center;
+}

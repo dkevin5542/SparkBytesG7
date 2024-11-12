@@ -1,8 +1,30 @@
-"use client";
+"use client"; //Using client-side features in Next.js
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/navbar.css';
+
+/**
+ * Navbar Component
+ *
+ * Displays the navigation menu for the Spark Bytes application.
+ * 
+ * Purpose:
+ * - Provides links for navigating between key pages.
+ * - Uses Next.js's 'useRouter' for client-side navigation.
+ *
+ * Usage:
+ * Included at the top of the application to give users an easy way to navigate the site.
+ *
+ * Features:
+ * Each navigation link is represented as a button, and clicking on it will route the user to its page.
+ *
+ * Styling:
+ * CSS from 'navbar.css' for layout and design.
+ *
+ * Functions:
+ * 'handleNavigation': Redirects to the specified path using 'router.push'.
+ */
 
 export const Navbar: React.FC = () => {
   const router = useRouter();
@@ -25,4 +47,5 @@ export const Navbar: React.FC = () => {
   );
 };
 
+/* Exporting to use in other parts of the application */
 export default Navbar;

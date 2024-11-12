@@ -1,3 +1,4 @@
+/* Navbar Container Styling */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -10,6 +11,7 @@
   margin-bottom: 20px;
 }
 
+/* Navbar Brand Styling */
 .navbar-brand {
   font-size: 2em; 
   font-weight: bold;
@@ -17,16 +19,19 @@
   cursor: pointer;
 }
 
+/* Navbar Links Container */
 .navbar-links {
   list-style: none;
   display: flex;
   gap: 25px; 
 }
 
+/* Individual Navbar Links */
 .navbar-links li {
   display: flex;
 }
 
+/* Navbar Buttons within Links */
 .navbar-links li button {
   background: none;
   border: none;
@@ -38,6 +43,7 @@
   border-radius: 6px;
 }
 
+/* Hover Effect for Navbar Buttons */
 .navbar-links li button:hover {
   background-color: #0056b3;
   color: #d1e7ff;

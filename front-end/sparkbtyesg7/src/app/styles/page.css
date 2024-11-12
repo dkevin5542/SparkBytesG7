@@ -1,3 +1,4 @@
+/* Page Container Styling */
 .page {
   max-width: 1000px;
   margin: 0 auto;
@@ -7,12 +8,14 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Page Headings Styling */
 .page h1, .page h2 {
   color: var(--accent-color);
   font-weight: bold;
   line-height: 1.2;
 }
 
+/* Page Paragraphs Styling */
 .page p {
   color: var(--foreground);
   font-size: 1.1rem;
