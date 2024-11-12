@@ -3,14 +3,23 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 
-#google oauth
+# google oauth
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+from dotenv import load_dotenv
+import os
+
+# load .env variables
+load_dotenv()
+
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+
+if not GOOGLE_CLIENT_ID:
+    raise ValueError("No GOOGLE_CLIENT_ID set for Flask application")
+
 app = Flask(__name__)
 CORS(app)
-
-GOOGLE_CLIENT_ID = '140220835320-hp2l5648gotpt7u322qks2eaf7k8ggvn.apps.googleusercontent.com'
 
 # get connection
 def get_db_connection():
@@ -170,6 +179,9 @@ def google_login():
     data = request.get_json()
     token = data.get('token')
 
+    if not token:
+        return jsonify({'message': 'Token is missing'}), 400
+
     try:
         # Verify the token with Google's OAuth2 API
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
@@ -179,30 +191,28 @@ def google_login():
             return jsonify({'message': 'Wrong issuer.'}), 401
 
         # Token is valid; extract user information
-        user_id = idinfo['sub']
+        google_user_id = idinfo['sub']
         email = idinfo['email']
         name = idinfo.get('name', 'Anonymous')
 
         # Check if user exists, if not, create a new user
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM User WHERE google_id = ?", (user_id,))
-        user = cursor.fetchone()
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM User WHERE google_id = ?", (google_user_id,))
+            user = cursor.fetchone()
 
-        if not user:
-            cursor.execute(
-                """
-                INSERT INTO User (email, diet, preferred_language, role)
-                VALUES (?, 'Omnivore', 'English', 'Student')
-                """,
-                (email,)
-            )
-            conn.commit()
-            user_id = cursor.lastrowid
-        else:
-            user_id = user['id']
-
-        conn.close()
+            if not user:
+                cursor.execute(
+                    """
+                    INSERT INTO User (google_id, email, diet, preferred_language, role)
+                    VALUES (?, ?, 'Omnivore', 'English', 'Student')
+                    """,
+                    (google_user_id, email)
+                )
+                conn.commit()
+                user_id = cursor.lastrowid
+            else:
+                user_id = user['id']
 
         return jsonify({
             'message': 'Login successful',
@@ -212,6 +222,8 @@ def google_login():
 
     except ValueError:
         return jsonify({'message': 'Invalid token'}), 401
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
 
 # Route to update user preferences
 @app.route('/api/update_preferences', methods=['PUT'])
