@@ -1,28 +1,55 @@
 # app.py
+
+"""
+Flask Backend for Spark Bytes
+
+This application provides a RESTful API for managing users, events, RSVPs, favorites, and reviews.
+It integrates Google OAuth for user authentication.
+
+Key Features:
+- User Authentication via Google OAuth
+- CRUD operations for events
+- RSVP functionality for events
+- Managing users' favorite events
+- Submitting reviews for attended events
+- Updating user preferences
+"""
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 
-# google oauth
+# Google OAuth libraries
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+# ENV management
 from dotenv import load_dotenv
 import os
 
 # load .env variables
 load_dotenv()
 
+# Retrieve Google Client ID from environment variables
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
+# Validate that GOOGLE_CLIENT_ID is properly set
 if not GOOGLE_CLIENT_ID:
     raise ValueError("No GOOGLE_CLIENT_ID set for Flask application")
 
+# Initialize Flask application and enable CORS
 app = Flask(__name__)
 CORS(app)
 
-# get connection
 def get_db_connection():
+    """
+    get_db_connection() establishes a connection to the SQLite database.
+
+    Returns:
+        sqlite3.connection: Database connection object with rows returned as dictionaries.
+    Raises:
+        RuntimeError: If there's an error connecting to the database.
+    """
     try:
         conn = sqlite3.connect('database.db')
         conn.row_factory = sqlite3.Row
@@ -30,9 +57,14 @@ def get_db_connection():
     except sqlite3.Error as e:
         raise RuntimeError(f"Database connection error: {e}")
 
-# retrieve users
 @app.route('/api/users', methods=['GET'])
 def get_users():
+    """
+    get_users() retrieves all users from the User table.
+
+    Returns:
+        Flask.Response: A JSON response containing the list of users or an error message.
+    """
     try:
         conn = get_db_connection()
         users = conn.execute('SELECT * FROM User').fetchall()
@@ -42,9 +74,14 @@ def get_users():
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
-# retrieve events
 @app.route('/api/events', methods=['GET'])
 def get_events():
+    """
+    get_events() retrieves all users from the Event table.
+
+    Returns:
+        Flask.Response: A JSON response containing the list of events or an error message.
+    """
     try:
         conn = get_db_connection()
         events = conn.execute('SELECT * FROM Event').fetchall()
@@ -54,9 +91,28 @@ def get_events():
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
-# create event (wip)
+# Note: not fully implemented yet on frontend, so dummy values are used for missing input fields
 @app.route('/api/events', methods=['POST'])
 def create_event():
+    """
+    create_event() creates a new event in the Event table.
+
+    Expected JSON Payload:
+    {
+        "title": "Event Title",
+        "description": "Event Description",
+        "date": "YYYY-MM-DD",
+        "location": "Event Location",
+        "user_id": Optional integer,
+        "food_type": Optional string,
+        "address": Optional string,
+        "start_time": Optional string (HH:MM:SS),
+        "end_time": Optional string (HH:MM:SS)
+    }
+
+    Returns:
+        Flask.Response: JSON response indicating success with the new event ID or an error message.
+    """
     try:
         data = request.get_json()
         
@@ -97,6 +153,19 @@ def create_event():
 # RSVP to event
 @app.route('/api/rsvp', methods=['POST'])
 def rsvp_event():
+    """
+    Submits an RSVP for a user to an event.
+
+    Expected JSON Payload:
+    {
+        "user_id": Integer,
+        "event_id": Integer,
+        "rsvp_status": Optional string ("Going", "Interested", "Not Going")
+    }
+
+    Returns:
+        Flask.Response: JSON response indicating successful RSVP or an error message.
+    """
     data = request.get_json()
     user_id = data.get('user_id')
     event_id = data.get('event_id')
@@ -122,6 +191,18 @@ def rsvp_event():
 # Favorite event
 @app.route('/api/favorites', methods=['POST'])
 def favorite_event():
+    """
+    Adds an event to a user's favorites.
+
+    Expected JSON Payload:
+    {
+        "user_id": Integer,
+        "event_id": Integer
+    }
+
+    Returns:
+        Flask.Response: JSON response indicating successful favorite or an error message.
+    """
     data = request.get_json()
     user_id = data.get('user_id')
     event_id = data.get('event_id')
@@ -143,9 +224,22 @@ def favorite_event():
     except sqlite3.Error as e:
         return jsonify({'error': 'Failed to add favorite', 'details': str(e)}), 500
 
-# Provide review for an event
 @app.route('/api/review', methods=['POST'])
 def give_feedback():
+    """
+    Submits a review for an event.
+
+    Expected JSON Payload:
+    {
+        "user_id": Integer,
+        "event_id": Integer,
+        "rating": Integer (1-5),
+        "comment": Optional string
+    }
+
+    Returns:
+        Flask.Response: JSON response indicating successful review or an error message.
+    """
     data = request.get_json()
     user_id = data.get('user_id')
     event_id = data.get('event_id')
@@ -172,9 +266,19 @@ def give_feedback():
     except sqlite3.Error as e:
         return jsonify({'error': 'Failed to submit feedback', 'details': str(e)}), 500
 
-# Google login
 @app.route('/api/google-login', methods=['POST'])
 def google_login():
+    """
+    Handles Google OAuth login.
+
+    Expected JSON Payload:
+    {
+        "token": "Google ID Token"
+    }
+
+    Returns:
+        Flask.Response: JSON response containing user details or an error message.
+    """
     # Get the token from the frontend
     data = request.get_json()
     token = data.get('token')
@@ -225,9 +329,21 @@ def google_login():
     except sqlite3.Error as e:
         return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
 
-# Route to update user preferences
 @app.route('/api/update_preferences', methods=['PUT'])
 def update_preferences():
+    """
+    Updates user preferences such as diet and preferred language.
+
+    Expected JSON Payload:
+    {
+        "diet": "Vegetarian" | "Vegan" | "Omnivore" | "Pescatarian" | "Other",
+        "preferred_language": "English" | "Mandarin" | "Arabic" | "Spanish",
+        "user_id": Integer
+    }
+
+    Returns:
+        Flask.Response: JSON response indicating successful preference update or an error message.
+    """
     try:
         data = request.get_json()
         diet = data.get('diet')
@@ -252,9 +368,14 @@ def update_preferences():
     except sqlite3.Error as e:
         return jsonify({"error": "Database error occurred", "details": str(e)}), 500
 
-# test for working api
 @app.route('/api/data', methods=['GET'])
 def get_data():
+    """
+    A test endpoint to verify that the API is working correctly.
+
+    Returns:
+        Flask.Response: JSON response with a dummy message and items.
+    """
     data = {
         'message': 'Flask Dummy File',
         'items': [1, 2, 3, 4]
