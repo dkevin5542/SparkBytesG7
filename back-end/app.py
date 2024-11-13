@@ -167,7 +167,7 @@ def get_event(event_id):
             cursor.execute("SELECT * FROM Event WHERE event_id = ?", (event_id,))
             event = cursor.fetchone()
             if cursor is None:
-                return jsonify({'error', 'Event not found'}), 404
+                return jsonify({'error': 'Event not found'}), 404
         return jsonify(dict(event))
     except Exception as e:
         return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
@@ -329,6 +329,34 @@ def favorite_event():
         return jsonify({'message': 'Event added to bookmarks'}), 201
     except sqlite3.Error as e:
         return jsonify({'error': 'Failed to add favorite', 'details': str(e)}), 500
+
+@app.route('api/favorites/<int:user_id>', methods=["GET"])
+def user_favorites(user_id):
+    """
+    user_favorites(user_id) retrieves a list of a specified user's favorited events by user_id.
+
+    Expected JSON Payload:
+    {
+        "user_id": Integer
+    }
+
+    Returns:
+        Flask.Response: A JSON response containing the list of specified events or an error message.
+    """
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT Event.event_id, Event.title, Event.date, Event.location FROM Favorite JOIN Event ON Favorite.event_id = Event.event_id WHERE Favorite.user_id = ?", (user_id,))
+            events = cursor.fetchall()
+
+            if not events:
+                return jsonify({'error', 'No favorites found for this user'}), 404
+            
+            events_list = [{'event_id': row[0], 'title': row[1], 'date': row[2], 'location': row[3]} for row in events]
+            return jsonify(events_list)
+        
+    except Exception as e:
+        return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
 
 @app.route('/api/review', methods=['POST'])
 def give_feedback():
