@@ -74,23 +74,7 @@ def get_users():
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
-@app.route('/api/events', methods=['GET'])
-def get_events():
-    """
-    get_events() retrieves all users from the Event table.
-
-    Returns:
-        Flask.Response: A JSON response containing the list of events or an error message.
-    """
-    try:
-        conn = get_db_connection()
-        events = conn.execute('SELECT * FROM Event').fetchall()
-        conn.close()
-        event_list = [dict(row) for row in events]
-        return jsonify(event_list), 200
-    except sqlite3.Error as e:
-        return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
-
+# CREATE Event
 # Note: not fully implemented yet on frontend, so dummy values are used for missing input fields
 @app.route('/api/events', methods=['POST'])
 def create_event():
@@ -113,42 +97,164 @@ def create_event():
     Returns:
         Flask.Response: JSON response indicating success with the new event ID or an error message.
     """
-    try:
-        data = request.get_json()
+    data = request.get_json()
         
-        # current fields
-        title = data.get('title')
-        description = data.get('description')
-        event_date = data.get('date')
-        location = data.get('location')
-
-        if not title or not description or not event_date or not location:
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # unimplemented fields with default values
-        user_id = data.get('user_id', 1)
-        food_type = data.get('food_type', 'Snacks')
-        address = data.get('address', 'N/A')
-        start_time = data.get('start_time', '00:00:00')
-        end_time = data.get('end_time', '23:59:59')
+    # current fields
+    title = data.get('title')
+    description = data.get('description')
+    event_date = data.get('date')
+    location = data.get('location')
+    user_id = data.get('user_id', 1)
+    food_type = data.get('food_type', 'Snacks')
+    address = data.get('address', 'N/A')
+    start_time = data.get('start_time', '00:00:00')
+    end_time = data.get('end_time', '23:59:59')
+    quantity = data.get('quantity', 0)
+    event_type = data.get('event_type', 'Faculty')
 
         # insert to database
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO Event (user_id, title, description, food_type, location, address, event_date, start_time, end_time)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (user_id, title, description, food_type, location, address, event_date, start_time, end_time)
-        )
-        conn.commit()
-        event_id = cursor.lastrowid
-        conn.close()
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO Event (user_id, title, description, food_type, location, address, event_date, start_time, end_time, quantity, event_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (user_id, title, description, food_type, location, address, event_date, start_time, end_time, quantity, event_type)
+            )
+            event_id = cursor.lastrowid
 
         return jsonify({'message': 'Event created successfully', 'event_id': event_id}), 201
     except sqlite3.Error as e:
-            return jsonify({'error': 'Failed to create event', 'details': str(e)}), 500
+        return jsonify({'error': 'Failed to create event', 'details': str(e)}), 500
+
+# RETRIEVE all events
+@app.route('/api/events', methods=['GET'])
+def get_events():
+    """
+    get_events() retrieves all events from the Event table.
+
+    Returns:
+        Flask.Response: A JSON response containing the list of events or an error message.
+    """
+    try:
+        conn = get_db_connection()
+        events = conn.execute('SELECT * FROM Event').fetchall()
+        conn.close()
+        event_list = [dict(row) for row in events]
+        return jsonify(event_list), 200
+    except sqlite3.Error as e:
+        return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
+
+# RETRIEVE an event by ID
+@app.route('/api/events/<int:event_id>', methods=['GET'])
+def get_event(event_id):
+    """
+    get_event(event_id) retrieves an event from the Event table by specifying the event_id.
+
+    Expected JSON Payload:
+    {
+        "event_id": Integer
+    }
+
+    Returns:
+        Flask.Response: A JSON response containing the specified event or an error message.
+    """
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM Event WHERE event_id = ?", (event_id,))
+            event = cursor.fetchone()
+            if cursor is None:
+                return jsonify({'error', 'Event not found'}), 404
+        return jsonify(dict(event))
+    except Exception as e:
+        return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
+    
+# UPDATE event
+@app.route('/api/events/<int:event_id>', methods=['PUT'])
+def update_event(event_id):
+    """
+    update_event(event_id) will update the fields of the specified event.
+
+    Expected JSON Payload:
+    {
+        "title": String,
+        "description": String,
+        "date": String,
+        "event_id": Integer,
+        "location": String,         
+        "food_type": String,        
+        "address": String,          
+        "start_time": String,       # in HH:MM:SS format
+        "end_time": String,         # in HH:MM:SS format
+        "quantity": Integer,        
+        "event_type": String  
+    }
+    
+    Returns:
+        Flask.Response: A JSON response containing a successful update message or an error.
+    """
+    data = request.get_json()
+
+    title = data.get('title')
+    description = data.get('description')
+    event_date = data.get('date')
+    location = data.get('location')
+    food_type = data.get('food_type')
+    address = data.get('address')
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
+    quantity = data.get('quantity')
+    event_type = data.get('event_type')
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                UPDATE Event
+                SET title = COALESCE(?, title),
+                    description = COALESCE(?, description),
+                    event_date = COALESCE(?, event_date),
+                    location = COALESCE(?, location),
+                    food_type = COALESCE(?, food_type),
+                    address = COALESCE(?, address),
+                    start_time = COALESCE(?, start_time),
+                    end_time = COALESCE(?, end_time),
+                    quantity = COALESCE(?, quantity),
+                    event_type = COALESCE(?, event_type),
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE event_id = ?
+                """,
+                (title, description, event_date, location, food_type, address, start_time, end_time, quantity, event_type, event_id))
+
+            if cursor.rowcount == 0:
+                return jsonify({'error': 'Event not found'}), 404
+            
+            return jsonify({'message': 'Event updated successfully'}), 200
+    except sqlite3.Error as e:
+        return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
+        
+# DELETE event
+@app.route('/api/events/<int:event_id>', methods=['DELETE'])
+def del_event(event_id):
+    """
+    del_event(event_id) will delete the specified event.
+
+    Returns:
+        Flask.Response: A JSON response containing a successful deletion message or an error.
+    """
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM Event WHERE event_id = ?', (event_id,))
+            if cursor.rowcount == 0:
+                return jsonify({'error': 'Event not found'}), 404
+            return jsonify({'message': 'Event deleted successfully'}), 200
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
 
 # RSVP to event
 @app.route('/api/rsvp', methods=['POST'])
@@ -301,7 +407,7 @@ def google_login():
 
         # Validate that the email ends with '@bu.edu'
         if not email.lower().endswith('@bu.edu'):
-            return jsonify({'message': 'Unauthorized domain, only @bu.edu emails are allowed.'})
+            return jsonify({'message': 'Unauthorized domain, only @bu.edu emails are allowed.'}), 403
 
         # Check if user exists, if not, create a new user
         with get_db_connection() as conn:

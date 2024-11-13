@@ -17,7 +17,7 @@ CREATE TABLE Event (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     food_type TEXT CHECK(food_type IN ('Snacks', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Kosher', 'Halal', 'Other')) DEFAULT 'Snacks',
-    food_quantity INTEGER DEFAULT 0,
+    quantity INTEGER DEFAULT 0,
     location VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
     event_date DATE NOT NULL,
@@ -69,7 +69,7 @@ INSERT INTO User (google_id, email, diet, preferred_language, role) VALUES
     ('daniele_google_id', 'daniele@bu.edu', 'Pescatarian', 'Arabic', 'Faculty'),
     ('evief_google_id', 'evief@bu.edu', 'Other', 'English', 'Faculty');
 
-INSERT INTO Event (user_id, title, description, food_type, food_quantity, location, address, event_date, start_time, end_time, event_type) VALUES
+INSERT INTO Event (user_id, title, description, food_type, quantity, location, address, event_date, start_time, end_time, event_type) VALUES
     (1, 'Vegetarian Event', 'A gathering for all vegetarian enthusiasts.', 'Vegetarian', 35, 'College of Arts and Sciences', '725 Commonwealth Ave', '2024-11-01', '12:00:00', '14:00:00', 'Faculty'),
     (2, 'Vegan Lunch', 'Enjoy vegan dishes from around the world.', 'Vegan', 30, 'George Sherman Union', '855 Commonwealth Ave', '2024-11-02', '13:00:00', '15:00:00', 'Faculty'),
     (3, 'Fine Arts Dinner', 'Dinner event with mixed food choices.', 'Other', 50, 'College of Fine Arts', '789 Maple Ave', '2024-11-03', '18:00:00', '20:00:00', 'Faculty'),
