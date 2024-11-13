@@ -133,17 +133,29 @@ def create_event():
 @app.route('/api/events', methods=['GET'])
 def get_events():
     """
-    get_events() retrieves all events from the Event table.
+    get_events() retrieves all events from the Event table as a paginated list of events.
+
+    Paramaters:
+        page (int): The page number (default 1).
+        per_page (int): The number of events per page (default 10).
 
     Returns:
-        Flask.Response: A JSON response containing the list of events or an error message.
+        Flask.Response: A JSON response containing the paginated list of events or an error message.
     """
     try:
-        conn = get_db_connection()
-        events = conn.execute('SELECT * FROM Event').fetchall()
-        conn.close()
+        page = request.args.get('page', 1, type-int)
+        per_page = request.args.get('per_page', 10, type=int)
+
+        offset = (page - 1) * per_page
+
+        with get_db_connection() as conn:
+            cursor = conn.cursor
+            cursor.execute('SELECT * FROM Event LIMIT ? OFFSET ?', (per_page, offset))
+            events = cursor.fetchall()
+
         event_list = [dict(row) for row in events]
-        return jsonify(event_list), 200
+        return jsonify({'page': page, 'per_page': per_page, 'total_events': len(event_list), 'events': event_list}), 200
+    
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
