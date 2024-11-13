@@ -136,21 +136,78 @@ def get_events():
     get_events() retrieves all events from the Event table as a paginated list of events.
 
     Paramaters:
+        Pagination
         page (int): The page number (default 1).
         per_page (int): The number of events per page (default 10).
+        
+        Sorting
+        sort_by
+        order
+
+        Filtering
+        keyword
+        dietary_needs
+        date
+        start_time
+        end_time
 
     Returns:
         Flask.Response: A JSON response containing the paginated list of events or an error message.
     """
     try:
+        # pagination parameters 
         page = request.args.get('page', 1, type-int)
         per_page = request.args.get('per_page', 10, type=int)
-
         offset = (page - 1) * per_page
+
+        # sorting parameters
+        sort_by = request.args.get('sort_by', 'date')  # Default sort by date
+        order = request.args.get('order', 'asc').lower() # Default ascending
+
+        # filtering parameters
+        keyword = request.args.get('keyword')
+        dietary_needs = request.args.get('dietary_needs')
+        date = request.args.get('date')
+        start_time = request.args.get('start_time')
+        end_time = request.args.get('end_time')
+
+        # Construct SQL query
+        query = "SELECT * FROM Event WHERE 1=1"
+        params = []
+
+        # Add filters if provided
+
+        if keyword:
+            query += " AND (title LIKE ? OR description LIKE ?)"
+            params.extend([f"%{keyword}%", f"%{keyword}%"])
+        
+        if dietary_needs:
+            query += " AND food_type = ?"
+            params.append(dietary_needs)
+        
+        if date:
+            query += " AND event_date = ?"
+            params.append(date)
+        
+        if start_time:
+            query += " AND start_time >= ?"
+            params.append(start_time)
+        
+        if end_time:
+            query += " AND end_time <= ?"
+            params.append(end_time)
+
+        # Add sorting by date, location, title
+        if sort_by in ["date", "location", "title"]:
+            query += f" ORDER BY {sort_by} {'ASC' if order == 'asc' else 'DESC'}"
+
+        # Add pagination
+        query += " LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
 
         with get_db_connection() as conn:
             cursor = conn.cursor
-            cursor.execute('SELECT * FROM Event LIMIT ? OFFSET ?', (per_page, offset))
+            cursor.execute(query, params)
             events = cursor.fetchall()
 
         event_list = [dict(row) for row in events]
@@ -178,9 +235,11 @@ def get_event(event_id):
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM Event WHERE event_id = ?", (event_id,))
             event = cursor.fetchone()
+
             if cursor is None:
                 return jsonify({'error': 'Event not found'}), 404
-        return jsonify(dict(event))
+        
+            return jsonify(dict(event))
     except Exception as e:
         return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
     
@@ -326,23 +385,23 @@ def favorite_event():
     event_id = data.get('event_id')
 
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO Favorite (user_id, event_id)
-            VALUES (?, ?)
-            """,
-            (user_id, event_id)
-        )
-        conn.commit()
-        conn.close()
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO Favorite (user_id, event_id)
+                VALUES (?, ?)
+                """,
+                (user_id, event_id)
+            )
+            conn.commit()
 
         return jsonify({'message': 'Event added to bookmarks'}), 201
+    
     except sqlite3.Error as e:
         return jsonify({'error': 'Failed to add favorite', 'details': str(e)}), 500
 
-@app.route('api/favorites/<int:user_id>', methods=["GET"])
+@app.route('/api/favorites/<int:user_id>', methods=["GET"])
 def user_favorites(user_id):
     """
     user_favorites(user_id) retrieves a list of a specified user's favorited events by user_id.
