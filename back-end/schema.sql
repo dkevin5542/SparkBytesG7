@@ -4,6 +4,8 @@ CREATE TABLE User(
     user_id INTEGER PRIMARY KEY,
     google_id TEXT UNIQUE NOT NULL,
     email varchar(255) UNIQUE NOT NULL,
+    bio TEXT,
+    interests TEXT,
     diet TEXT CHECK(diet IN ('Vegetarian', 'Vegan', 'Omnivore', 'Pescatarian', 'Other')) DEFAULT 'Omnivore',
     preferred_language TEXT CHECK(preferred_language IN ('English', 'Mandarin', 'Arabic', 'Spanish')) DEFAULT 'English',
     role TEXT CHECK(role IN ('Student', 'Faculty')) DEFAULT 'Student'

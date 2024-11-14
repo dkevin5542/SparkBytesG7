@@ -15,7 +15,7 @@ Key Features:
 - Updating user preferences
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import sqlite3
 
@@ -525,7 +525,9 @@ def google_login():
                 conn.commit()
                 user_id = cursor.lastrowid
             else:
-                user_id = user['id']
+                user_id = user['user_id']
+        
+        session['user_id'] = user_id
 
         return jsonify({
             'message': 'Login successful',
@@ -538,6 +540,31 @@ def google_login():
     except sqlite3.Error as e:
         return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
 
+@app.route('/api/create-profile', methods=['POST'])
+def create_profile():
+    """
+    """
+    user_id = session.get('user_id')
+    data = request.get_json()
+    name = data.get('name')
+    bio = data.get('bio')
+    interests = data.get('interests')
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE User
+                SET name = ?, bio = ?, interests = ?
+                WHERE user_id = ?
+            """, (name, bio, interests, user_id))
+            conn.commit()
+
+        return jsonify({'message': 'Profile created successfully'}), 201
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Failed to create profile', 'details': str(e)}), 500
+
+    
 @app.route('/api/update_preferences', methods=['PUT'])
 def update_preferences():
     """
