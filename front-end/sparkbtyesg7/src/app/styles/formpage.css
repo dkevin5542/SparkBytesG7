@@ -1,50 +1,119 @@
+/* Container for the entire page */
 .create-event-page {
-    max-width: 800px;
-    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f7f9fc;
     padding: 2rem;
-    font-family: 'Poppins', sans-serif;
-}
-
-.create-event-page h1, .create-event-page h2 {
-    color: #333;
-}
-
-.feedback-message {
-    margin: 1rem 0;
+  }
+  
+  /* Content styling */
+  .content {
+    width: 100%;
+    max-width: 600px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Title styling */
+  .content h1 {
+    font-size: 2rem;
+    color: #333333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  
+  /* Feedback message styling */
+  .feedback-message {
     padding: 1rem;
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    margin-bottom: 1.5rem;
     border-radius: 6px;
-}
-
-.event-list {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    font-size: 1rem;
+  }
+  
+  /* Form container (optional if form layout needs additional styling) */
+  .create-event-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Input and textarea styling */
+  .create-event-form input,
+  .create-event-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: #333333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .create-event-form input:focus,
+  .create-event-form textarea:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  }
+  
+  /* Button styling */
+  .create-event-form button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #4a90e2;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-event-form button:hover {
+    background-color: #357abd;
+  }
+  
+  /* Event list styling */
+  .event-list {
     margin-top: 2rem;
-}
-
-.event-item {
+    text-align: left;
+  }
+  
+  .event-list h2 {
+    font-size: 1.5rem;
+    color: #333333;
+    margin-bottom: 1rem;
+  }
+  
+  .event-item {
     padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 6px;
     margin-bottom: 1rem;
-    background-color: #fafafa;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.event-item h3 {
-    margin: 0;
-    color: #4a90e2;
-}
-
-.event-item p {
-    margin: 0.5rem 0;
-}
-
-.empty-state {
-    color: #888;
-    font-style: italic;
-}
-
-h1 {
+    background-color: #f9f9f9;
+  }
+  
+  .event-item h3 {
+    font-size: 1.25rem;
+    color: #333333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .event-item p {
+    font-size: 1rem;
+    color: #666666;
+  }
+  
+  .empty-state {
+    color: #999999;
+    font-size: 1rem;
     text-align: center;
-}
+  }
+  

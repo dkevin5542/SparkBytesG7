@@ -1,0 +1,89 @@
+/* Center container with background styling */
+.create-profile-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+  }
+  
+  /* Profile Card styling */
+  .create-profile-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 3rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  /* Heading */
+  .create-profile-card h1 {
+    font-size: 2rem;
+    color: #333333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  
+  /* Label Styling */
+  .create-profile-card label {
+    display: block;
+    text-align: left;
+    font-weight: 500;
+    color: #666666;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Input and Textarea Styling */
+  .create-profile-card input,
+  .create-profile-card textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: #333333;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .create-profile-card input:focus,
+  .create-profile-card textarea:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  }
+  
+  /* Button Styling */
+  .create-profile-card button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #4a90e2;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1.5rem;
+  }
+  
+  .create-profile-card button:hover {
+    background-color: #357abd;
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  
