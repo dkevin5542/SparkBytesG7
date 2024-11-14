@@ -1,5 +1,7 @@
 import React from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { useRouter } from 'next/navigation'; 
+
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -14,6 +16,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 };
 
 export const GoogleAuthButton: React.FC = () => {
+  const router = useRouter();
   return (
     <div className="google-login-button">
       <GoogleLogin
@@ -31,6 +34,7 @@ export const GoogleAuthButton: React.FC = () => {
           .then(data => {
             if (data.message === 'Login successful') {
               console.log('User logged in:', data);
+              router.push('/createprofile');
             } else {
               console.log('Login failed:', data.message);
             }
@@ -45,4 +49,8 @@ export const GoogleAuthButton: React.FC = () => {
       />
     </div>
   );
+};
+
+export const isAuthenticated = () => {
+  return localStorage.getItem('userToken') !== null;
 };

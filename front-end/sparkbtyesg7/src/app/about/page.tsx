@@ -1,7 +1,6 @@
 /* Importing React and global CSS styles. */
 import React from 'react';
-import '../globals.css'; 
-
+import '@/app/styles/about.css';
 /**
  * About Component
  *
@@ -21,15 +20,17 @@ import '../globals.css';
 
 const About: React.FC = () => {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>About Us</h1>
-      <p>Spark Bytes connects Boston University students with free food at campus events while helping reduce food waste.
-        Faculty can post event details like food type, location, and time, allowing students to RSVP and plan their attendance.
-        Our goal is to create a sustainable, community-driven solution that benefits both students and the environment.
-      </p>
+    <div className="about-page">
+      <div className="about-content">
+        <h1>About Us</h1>
+        <p>
+          Spark Bytes connects Boston University students with free food at campus events while helping reduce food waste.
+          Faculty can post event details like food type, location, and time, allowing students to RSVP and plan their attendance.
+          Our goal is to create a sustainable, community-driven solution that benefits both students and the environment.
+        </p>
+      </div>
     </div>
   );
 };
 
-/* Exporting to use in other parts of the application */
 export default About;

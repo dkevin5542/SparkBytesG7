@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
         <li><button onClick={() => handleNavigation('/create-event')}>CREATE EVENT</button></li>
         <li><button onClick={() => handleNavigation('/events')}>EVENTS</button></li>
         <li><button onClick={() => handleNavigation('/contact')}>CONTACT</button></li>
-        <li><button onClick={() => handleNavigation('/login')}>Login</button></li>
+        {/* <li><button onClick={() => handleNavigation('/login')}>Login</button></li> */}
 
       </ul>
     </nav>
