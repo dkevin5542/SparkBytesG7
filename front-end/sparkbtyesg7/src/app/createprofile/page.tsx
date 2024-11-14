@@ -28,6 +28,7 @@ const CreateProfile: React.FC = () => {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(profileData)
       });
       const data = await response.json();

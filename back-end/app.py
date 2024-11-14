@@ -39,7 +39,8 @@ if not GOOGLE_CLIENT_ID:
 
 # Initialize Flask application and enable CORS
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
+app.secret_key = 'ITS-A-SECRET'
 
 def get_db_connection():
     """
@@ -528,7 +529,9 @@ def google_login():
                 user_id = user['user_id']
         
         session['user_id'] = user_id
-
+        session.modified = True
+        print("Stored user_id in session:", session['user_id'])
+        
         return jsonify({
             'message': 'Login successful',
             'user_id': user_id,
@@ -545,7 +548,10 @@ def create_profile():
     """
     """
     user_id = session.get('user_id')
+    print("User ID from session:", user_id)
+
     data = request.get_json()
+    print("Received data:", data)
     name = data.get('name')
     bio = data.get('bio')
     interests = data.get('interests')
@@ -618,5 +624,19 @@ def get_data():
     }
     return jsonify(data)
 
+# test session info
+@app.route('/session-info')
+def session_info():
+    return jsonify(dict(session))
+
+@app.route('/set-session')
+def set_session():
+    session['user_id'] = 123  # Set a dummy user ID
+    return 'Session set!'
+
+@app.route('/get-session')
+def get_session():
+    return f"user_id in session is: {session.get('user_id')}"
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    app.run(host="localhost", port=5002, debug=True)
