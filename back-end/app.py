@@ -16,6 +16,7 @@ Key Features:
 """
 
 from flask import Flask, request, jsonify, session
+from flask_session import Session
 from flask_cors import CORS
 import sqlite3
 
@@ -39,8 +40,10 @@ if not GOOGLE_CLIENT_ID:
 
 # Initialize Flask application and enable CORS
 app = Flask(__name__)
+app.secret_key = 'SECRET-KEY'
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 CORS(app, supports_credentials=True)
-app.secret_key = 'ITS-A-SECRET'
 
 def get_db_connection():
     """

@@ -28,6 +28,7 @@ export const GoogleAuthButton: React.FC = () => {
           headers: {
             'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({ token: idToken })
         })
           .then(response => response.json())
