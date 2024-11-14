@@ -1,8 +1,9 @@
 "use client"; // Using client-side features in Next.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import EventList from "./components/eventlist";
 import '@/app/styles/page.css';
-
+import { isAuthenticated } from './login/login';
 /**
  * Home Component
  *
@@ -30,6 +31,14 @@ export default function Home() {
     { title: "Event 1", description: "Description 1", date: "2024-12-01", location: "Location 1" },
     { title: "Event 2", description: "Description 2", date: "2024-12-02", location: "Location 2" }
   ]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/login'); // Redirect to login if not authenticated
+    }
+  }, []);
 
   return (
     <div className="home-page">

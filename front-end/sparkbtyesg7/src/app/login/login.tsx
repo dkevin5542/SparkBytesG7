@@ -46,3 +46,7 @@ export const GoogleAuthButton: React.FC = () => {
     </div>
   );
 };
+
+export const isAuthenticated = () => {
+  return localStorage.getItem('userToken') !== null;
+};
