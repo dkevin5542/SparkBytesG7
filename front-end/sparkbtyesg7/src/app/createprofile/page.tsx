@@ -23,6 +23,7 @@ const CreateProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      //need an api route that stores the newly created information, change route when created
       const response = await fetch('http://localhost:5002/api/create-profile', {
         method: 'POST',
         headers: {
@@ -36,6 +37,9 @@ const CreateProfile: React.FC = () => {
       if (data.success) {
         console.log('Profile created successfully');
         router.push('/home');
+        //uncomment once profile page is created
+        // router.push('/profile');
+
       } else {
         console.error('Failed to create profile:', data.message);
       }
