@@ -160,7 +160,7 @@ def get_events():
     """
     try:
         # pagination parameters 
-        page = request.args.get('page', 1, type-int)
+        page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
         offset = (page - 1) * per_page
 
@@ -202,21 +202,23 @@ def get_events():
             params.append(end_time)
 
         # Add sorting by date, location, title
-        if sort_by in ["date", "location", "title"]:
+        if sort_by in ["event_date", "location", "title"]:
             query += f" ORDER BY {sort_by} {'ASC' if order == 'asc' else 'DESC'}"
 
         # Add pagination
         query += " LIMIT ? OFFSET ?"
         params.extend([per_page, offset])
+        print("QUERY:", query)
+        print("PARAMS:", params)
 
         with get_db_connection() as conn:
-            cursor = conn.cursor
+            print("Database connected successfully")
+            cursor = conn.cursor()
             cursor.execute(query, params)
             events = cursor.fetchall()
 
         event_list = [dict(row) for row in events]
         return jsonify({'page': page, 'per_page': per_page, 'total_events': len(event_list), 'events': event_list}), 200
-    
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 

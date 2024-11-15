@@ -69,7 +69,7 @@ export default function Home() {
   // Fetch events from the backend
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/events');
+      const response = await fetch('http://127.0.0.1:5002/api/events');
       if (response.ok) {
         const data = await response.json();
         setEvents(data); // Set the fetched events
