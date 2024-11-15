@@ -8,7 +8,6 @@ const Profile: React.FC = () => {
   const [profileData, setProfileData] = useState<{ name: string; bio: string; interests: string } | null>(null);
 
   useEffect(() => {
-    // Retrieve profile data from localStorage
     const storedProfile = JSON.parse(localStorage.getItem('profileData') || '{}');
     if (!storedProfile.name) {
       // If no profile data is available, redirect to the create profile page
