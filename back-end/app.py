@@ -557,7 +557,7 @@ def get_user_info(user_id):
             cursor.execute("SELECT * FROM User WHERE user_id = ?", (user_id,))
             result = cursor.fetchone()
             if result:
-                return jsonify()
+                return jsonify(result)
             else:
                 return jsonify({'error': 'User not found'}), 404
     except sqlite3.Error as e:
@@ -575,7 +575,10 @@ def create_profile():
     name = data.get('name')
     bio = data.get('bio')
     interests = data.get('interests')
-
+    print(name)
+    print(bio)
+    print(interests)
+    
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
