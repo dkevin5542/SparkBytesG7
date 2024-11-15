@@ -456,6 +456,11 @@ def google_login():
             else:
                 user_id = user['id']
 
+
+        # Store user_id and email in session
+        session['user_id'] = user_id
+        session['email'] = email
+
         return jsonify({
             'message': 'Login successful',
             'user_id': user_id,
@@ -466,6 +471,18 @@ def google_login():
         return jsonify({'message': 'Invalid token'}), 401
     except sqlite3.Error as e:
         return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
+
+#newly added route to see if user is logged in or not
+@app.route('/api/protected-route')
+def protected_route():
+    if 'user_id' in session:
+        return jsonify({
+            'message': 'You are logged in',
+            'user_id': session['user_id'],
+            'email': session['email']
+        }), 200
+    else:
+        return jsonify({'message': 'Not authenticated'}), 401
 
 @app.route('/api/update_preferences', methods=['PUT'])
 def update_preferences():
