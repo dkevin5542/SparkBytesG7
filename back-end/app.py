@@ -40,7 +40,7 @@ if not GOOGLE_CLIENT_ID:
 
 # Initialize Flask application and enable CORS
 app = Flask(__name__)
-app.secret_key = 'SECRET-KEY'
+app.config['SECRET_KEY'] = 'secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 CORS(app, supports_credentials=True)
@@ -475,6 +475,7 @@ def give_feedback():
     except sqlite3.Error as e:
         return jsonify({'error': 'Failed to submit feedback', 'details': str(e)}), 500
 
+# ISSUE
 @app.route('/api/google-login', methods=['POST'])
 def google_login():
     """
@@ -543,6 +544,22 @@ def google_login():
 
     except ValueError:
         return jsonify({'message': 'Invalid token'}), 401
+    except sqlite3.Error as e:
+        return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
+
+@app.route('/api/<int:user_id>/user-info', methods=['GET'])
+def get_user_info(user_id):
+    """
+    """
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM User WHERE user_id = ?", (user_id,))
+            result = cursor.fetchone()
+            if result:
+                return jsonify()
+            else:
+                return jsonify({'error': 'User not found'}), 404
     except sqlite3.Error as e:
         return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
 
