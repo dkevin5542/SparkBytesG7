@@ -69,10 +69,11 @@ export default function Home() {
   // Fetch events from the backend
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5002/api/events');
+      const response = await fetch('http://localhost:5002/api/events');
       if (response.ok) {
         const data = await response.json();
-        setEvents(data); // Set the fetched events
+        console.log('here', data);
+        setEvents(data.events); // Set the fetched events
       } else {
         console.error('Failed to fetch events');
         setError('Failed to fetch events');
@@ -88,7 +89,9 @@ export default function Home() {
   // Fetch events on component mount
   useEffect(() => {
     fetchEvents();
+    console.log(events);
   }, []);
+
 
   if (loading) {
     return <div className="home-page"><p>Loading events...</p></div>;

@@ -5,6 +5,7 @@ import '@/app/styles/eventlist.css';
 
 
 export const EventList = ({ events }) => {
+  console.log("in event list", events)
   return (
     <div className="event-list">
       {events.map((event, index) => (

@@ -1,7 +1,7 @@
 import React from 'react';
 import '@/app/styles/eventCard.css';
 
-export const EventCard = ({ event = {} }) => {
+export const EventCard = ({ event }) => {
   if (!event || Object.keys(event).length === 0) {
     return <div className="event-card">No event details available</div>;
   }
