@@ -1,9 +1,42 @@
 "use client";
+
+import React from 'react';
+import Link from 'next/link';
+
+/**
+ * HomePage Component
+ *
+ * The homepage of the SparkBytes application.
+ * Uses client-side rendering to provide an interactive user experience.
+ *
+ * Purpose:
+ * - Displays a welcoming message and brief description of SparkBytes.
+ * - Provides a navigation link to the Events page.
+ *
+ * Features:
+ * - Renders a heading and description introducing SparkBytes.
+ * - Includes a Link component for client-side navigation to the Events page.
+ */
+
+
+export default function Home() {
+  return (
+    <div className="home-page">
+      <h1>Welcome to SparkBytes</h1>
+      <p>Find and share events with free food!</p>
+      <Link href="/events">
+        <a>Check out our events</a> {/* Link to the Events page */}
+      </Link>
+    </div>
+  );
+}
+
+/*"use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EventList from "./components/eventlist";
 import '@/app/styles/page.css';
-import { isAuthenticated } from './login/login';
+import { isAuthenticated } from './login/login';*/
 /**
  * Home Component
  *
@@ -51,11 +84,12 @@ import { isAuthenticated } from './login/login';
 //   );
 // }
 
-//backend testing to see if newly created events will display 
+//backend testing to see if newly created events will display
+/*
 export default function Home() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); */
 
   //comment out line 36-42 if you want to test without logging in everytime
   // const router = useRouter();
@@ -67,6 +101,7 @@ export default function Home() {
   // }, []);
 
   // Fetch events from the backend
+  /*
   const fetchEvents = async () => {
     try {
       const response = await fetch('http://localhost:5002/api/events');
@@ -113,4 +148,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
+}*/
