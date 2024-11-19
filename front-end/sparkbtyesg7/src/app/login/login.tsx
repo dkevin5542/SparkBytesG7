@@ -48,34 +48,7 @@ export const GoogleAuthButton: React.FC = () => {
   return (
     <div className="google-login-button">
       <GoogleLogin
-<<<<<<< HEAD
-        onSuccess={(credentialResponse) => {
-          const idToken = credentialResponse.credential;
-
-        fetch('http://localhost:5002/api/google-login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({ token: idToken })
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.message === 'Login successful') {
-              console.log('User logged in:', data);
-              router.push('/createprofile');
-            } else {
-              console.log('Login failed:', data.message);
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-        }}
-=======
         onSuccess={handleLoginSuccess}
->>>>>>> dd5f06f5e3b4bb111fd33b0ece6a140cb376b987
         onError={() => {
           console.error('Login Failed');
         }}
