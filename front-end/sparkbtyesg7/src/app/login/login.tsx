@@ -2,6 +2,7 @@ import React from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
 
+
 interface AuthProviderProps {
   children: React.ReactNode;
 }

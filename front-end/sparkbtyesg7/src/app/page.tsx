@@ -1,7 +1,9 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import EventList from "./components/eventlist";
-import '@/app/styles/page.css';
+import "@/app/styles/page.css";
+import { useRouter } from "next/navigation";
+import { isAuthenticated } from "./login/login";
 
 /**
  * Home Component
@@ -34,40 +36,81 @@ import '@/app/styles/page.css';
 export default function Home() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Allow error to be a string or null
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   // Fetch events from the backend
-  const fetchEvents = async () => {
+  const fetchEvents = async (isMounted: () => boolean) => {
     try {
-      const response = await fetch('http://localhost:5002/api/events');
+      const response = await fetch("http://localhost:5002/api/events");
       if (response.ok) {
         const data = await response.json();
-        console.log('here', data);
-        setEvents(data.events); 
+        console.log("here", data);
+        if (isMounted()) {
+          setEvents(data.events);
+        }
       } else {
-        console.error('Failed to fetch events');
-        setError('Failed to fetch events'); 
+        console.error("Failed to fetch events");
+        if (isMounted()) {
+          setError("Failed to fetch events");
+        }
       }
     } catch (err) {
-      console.error('Error fetching events:', err);
-      setError('Error fetching events'); 
+      console.error("Error fetching events:", err);
+      if (isMounted()) {
+        setError("Error fetching events");
+      }
     } finally {
-      setLoading(false); 
+      if (isMounted()) {
+        setLoading(false);
+      }
     }
   };
 
-  // Fetch events on component mount
   useEffect(() => {
-    fetchEvents();
-    console.log(events);
+    let mounted = true; // Track if the component is mounted
+    const isMounted = () => mounted;
+
+    // Authentication logic: Check if the user is authenticated before proceeding
+    // const checkAuthAndFetchEvents = async () => {
+    //   try {
+    //     const authenticated = await isAuthenticated();
+
+    //     if (authenticated) {
+    //       // If authenticated, fetch the events
+          fetchEvents(isMounted);
+    //     } else {
+    //       // Redirect to login page if not authenticated
+    //       router.push("/login");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error during authentication check:", error);
+    //     router.push("/login"); // Redirect to login page if auth check fails
+    //   }
+    // };
+
+    // checkAuthAndFetchEvents();
+
+    // Cleanup function to avoid updating state on unmounted components
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (loading) {
-    return <div className="home-page"><p>Loading events...</p></div>;
+    return (
+      <div className="home-page">
+        <p>Loading events...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="home-page"><p>{error}</p></div>;
+    return (
+      <div className="home-page">
+        <p>{error}</p>
+      </div>
+    );
   }
 
   return (
