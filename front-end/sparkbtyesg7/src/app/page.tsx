@@ -72,24 +72,24 @@ export default function Home() {
     const isMounted = () => mounted;
 
     // Authentication logic: Check if the user is authenticated before proceeding
-    // const checkAuthAndFetchEvents = async () => {
-    //   try {
-    //     const authenticated = await isAuthenticated();
+    const checkAuthAndFetchEvents = async () => {
+      try {
+        const authenticated = await isAuthenticated();
 
-    //     if (authenticated) {
-    //       // If authenticated, fetch the events
+        if (authenticated) {
+          // If authenticated, fetch the events
           fetchEvents(isMounted);
-    //     } else {
-    //       // Redirect to login page if not authenticated
-    //       router.push("/login");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error during authentication check:", error);
-    //     router.push("/login"); // Redirect to login page if auth check fails
-    //   }
-    // };
+        } else {
+          // Redirect to login page if not authenticated
+          router.push("/login");
+        }
+      } catch (error) {
+        console.error("Error during authentication check:", error);
+        router.push("/login"); // Redirect to login page if auth check fails
+      }
+    };
 
-    // checkAuthAndFetchEvents();
+    checkAuthAndFetchEvents();
 
     // Cleanup function to avoid updating state on unmounted components
     return () => {
