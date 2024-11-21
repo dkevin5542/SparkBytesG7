@@ -9,7 +9,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
-    <GoogleOAuthProvider clientId="140220835320-hp2l5648gotpt7u322qks2eaf7k8ggvn.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId='140220835320-hp2l5648gotpt7u322qks2eaf7k8ggvn.apps.googleusercontent.com'>
       {children}
     </GoogleOAuthProvider>
   );
@@ -20,6 +20,13 @@ export const GoogleAuthButton: React.FC = () => {
 
   const handleLoginSuccess = async (credentialResponse: any) => {
     const idToken = credentialResponse.credential;
+
+    if (!idToken) {
+      console.error('No token received');
+      return;
+    }
+
+    console.log('Received token:', idToken);
 
     try {
       const response = await fetch('http://localhost:5002/api/google-login', {
@@ -45,6 +52,8 @@ export const GoogleAuthButton: React.FC = () => {
       console.error('Error during login:', error);
     }
   };
+
+  
 
   return (
     <div className="google-login-button">
@@ -78,3 +87,10 @@ export const isAuthenticated = async (): Promise<boolean> => {
     return false;
   }
 };
+
+// export const isAuthenticated = (): boolean => {
+//   // Check if the user_id is stored in localStorage to determine authentication status
+//   const userId = localStorage.getItem('user_id');
+//   return userId !== null;
+// };
+

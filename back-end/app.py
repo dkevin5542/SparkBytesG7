@@ -80,7 +80,7 @@ def get_users():
 
 # CREATE Event
 # Note: not fully implemented yet on frontend, so dummy values are used for missing input fields
-@app.route('/api/events', methods=['POST'])
+@app.route('/api/events1', methods=['POST'])
 def create_event():
     """
     create_event() creates a new event in the Event table.
