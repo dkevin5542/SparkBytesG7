@@ -1,32 +1,33 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import '@/app/styles/profile.css';
+"use client";  
 
-const Profile: React.FC = () => {
-  const router = useRouter();
-  const [profileData, setProfileData] = useState<{ name: string; bio: string; interests: string } | null>(null);
+import React, { useState } from 'react';
+import '@/app/styles/page.css';
+import '@/app/styles/profile.css'; 
+import Navbar from '../components/navbar';
 
-  useEffect(() => {
-    const storedProfile = JSON.parse(localStorage.getItem('profileData') || '{}');
-    if (!storedProfile.name) {
-      // If no profile data is available, redirect to the create profile page
-      router.push('/createprofile');
-    } else {
-      setProfileData(storedProfile);
-    }
-  }, []);
+/**
+ * Profile Page Component
+ *
+ * Displays the user profile page.
+ *
+ * Features:
+ * - Relies on the Navbar for navigation between profile-specific actions.
+ * - Displays a welcome message or additional profile-specific content.
+ *
+ * Usage:
+ * Serves as the landing page for user profile actions.
+ */
 
-  if (!profileData) return null; 
-
-  return (
-    <div className="profile-page">
-      <h1>Your Profile</h1>
-      <p><strong>Name:</strong> {profileData.name}</p>
-      <p><strong>Bio:</strong> {profileData.bio}</p>
-      <p><strong>Interests:</strong> {profileData.interests}</p>
-    </div>
-  );
-};
-
-export default Profile;
+const ProfilePage: React.FC = () => {
+    return (
+      <div className="profile-page">
+        <Navbar />
+        <div className="profile-container">
+          <h1>Welcome to Your Profile</h1>
+          <p>Select an option from the profile dropdown in the navbar to manage your account.</p>
+        </div>
+      </div>
+    );
+  };
+  
+  export default ProfilePage;

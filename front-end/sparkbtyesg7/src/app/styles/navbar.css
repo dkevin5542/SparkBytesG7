@@ -48,3 +48,67 @@
   background-color: #0056b3;
   color: #d1e7ff;
 }
+
+/* Navbar Dropdown */
+.dropdown {
+  position: relative;
+}
+
+/* Dropdown Button */
+.dropdown-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  padding: 12px 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dropdown-button:hover {
+  background-color: #0056b3;
+  color: #d1e7ff;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Align just below the dropdown button */
+  left: 0;
+  background-color: #fff;
+  color: #333;
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0; /* Add a slight gap below the button */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 200px; /* Consistent width for dropdown */
+  z-index: 10; /* Ensure the dropdown appears on top */
+}
+
+/* Dropdown Menu Items */
+.dropdown-menu li {
+  padding: 12px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add spacing if icons are added later */
+}
+
+/* Hover Effect for Dropdown Items */
+.dropdown-menu li:hover {
+  background-color: #f7f9fc;
+  color: #0056b3;
+}
+
+/* Dropdown Menu Separator */
+.dropdown-menu li:not(:last-child) {
+  border-bottom: 1px solid #ddd;
+}

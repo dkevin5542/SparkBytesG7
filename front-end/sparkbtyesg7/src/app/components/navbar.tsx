@@ -1,6 +1,6 @@
 "use client"; //Using client-side features in Next.js
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/navbar.css';
 
@@ -28,9 +28,14 @@ import '@/app/styles/navbar.css';
 
 export const Navbar: React.FC = () => {
   const router = useRouter();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const handleNavigation = (path: string) => {
     router.push(path);
+  };
+
+  const handleDropdownToggle = () => {
+    setDropdownVisible(!dropdownVisible);
   };
 
   return (
@@ -40,9 +45,22 @@ export const Navbar: React.FC = () => {
         <li><button onClick={() => handleNavigation('/')}>HOME</button></li>
         <li><button onClick={() => handleNavigation('/about')}>ABOUT</button></li> {/* Corrected route */}
         <li><button onClick={() => handleNavigation('/create-event')}>CREATE EVENT</button></li>
-        <li><button onClick={() => handleNavigation('/events')}>EVENTS</button></li>
         <li><button onClick={() => handleNavigation('/contact')}>CONTACT</button></li>
+        <li className="dropdown">
+          <button className="dropdown-button" onClick={handleDropdownToggle}>
+            PROFILE
+          </button>
+          {dropdownVisible && (
+            <ul className="dropdown-menu">
+              <li onClick={() => handleNavigation('/profile/edit')}>EDIT PROFILE</li>
+              <li onClick={() => handleNavigation('/profile/posted-events')}>POSTED EVENTS</li>
+              <li onClick={() => handleNavigation('/profile/favorites')}>FAVORITES</li>
+              <li onClick={() => handleNavigation('/logout')}>LOGOUT</li>
+            </ul>
+          )}
+        </li>
         {/* <li><button onClick={() => handleNavigation('/login')}>Login</button></li> */}
+
       </ul>
     </nav>
   );
