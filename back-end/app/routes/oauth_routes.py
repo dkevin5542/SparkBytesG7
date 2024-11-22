@@ -53,6 +53,8 @@ def google_login():
         # Store user_id in session
         session['user_id'] = user_id
 
+        print('user_id is:')
+        print(session['user_id'])
         return jsonify({
             'message': 'Login successful',
             'user_id': user_id,
@@ -63,6 +65,16 @@ def google_login():
         return jsonify({'message': 'Invalid token'}), 401
     except Exception as e:
         return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
+
+@oauth_bp.route('/api/google-logout', methods=['POST'])
+def google_logout():
+    """
+    Handles user logout by clearing the session.
+    """
+    # Clear the session
+    session.clear()  # or you could use session.pop('user_id') if you want to be specific
+
+    return jsonify({'message': 'Logout successful'}), 200   
 
 @oauth_bp.route('/api/protected-route', methods=['GET'])
 def protected_route():

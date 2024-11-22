@@ -24,7 +24,7 @@ const CreateProfile: React.FC = () => {
     e.preventDefault();
     try {
       //need an api route that stores new user profile
-      const response = await fetch('http://localhost:5002/api/create-profile', {
+      const response = await fetch('http://localhost:5002/api/create_profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
