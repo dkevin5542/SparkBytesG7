@@ -2,7 +2,7 @@
 
 CREATE TABLE User(
     user_id TEXT PRIMARY KEY,
-    bu_id varchar(10) UNIQUE DEFAULT 'U123456789',
+    bu_id varchar(10) UNIQUE,
     email varchar(255) UNIQUE NOT NULL,
     name TEXT,
     bio TEXT,
@@ -65,12 +65,12 @@ CREATE TABLE Review (
 );
 
 -- INSERT statements for dummy test data
-INSERT INTO User (user_id, email, diet, preferred_language, role) VALUES
-    ('alvin_google_id', 'alvinb@bu.edu', 'Vegetarian', 'English', 'Faculty'),
-    ('barry_google_id', 'barryc@bu.edu', 'Vegan', 'Mandarin', 'Student'),
-    ('charlie_google_id', 'charlied@bu.edu', 'Omnivore', 'Spanish', 'Student'),
-    ('daniele_google_id', 'daniele@bu.edu', 'Pescatarian', 'Arabic', 'Faculty'),
-    ('evief_google_id', 'evief@bu.edu', 'Other', 'English', 'Faculty');
+INSERT INTO User (user_id, bu_id, email, diet, preferred_language, role) VALUES
+    ('alvin_google_id', 'U123456789', 'alvinb@bu.edu', 'Vegetarian', 'English', 'Faculty'),
+    ('barry_google_id', 'U223456789', 'barryc@bu.edu', 'Vegan', 'Mandarin', 'Student'),
+    ('charlie_google_id', 'U323456789', 'charlied@bu.edu', 'Omnivore', 'Spanish', 'Student'),
+    ('daniele_google_id', 'U423456789', 'daniele@bu.edu', 'Pescatarian', 'Arabic', 'Faculty'),
+    ('evief_google_id', 'U523456789', 'evief@bu.edu', 'Other', 'English', 'Faculty');
 
 INSERT INTO Event (user_id, title, description, food_type, quantity, location, address, event_date, start_time, end_time, event_type) VALUES
     ('alvin_google_id', 'Vegetarian Event', 'A gathering for all vegetarian enthusiasts.', 'Vegetarian', 35, 'College of Arts and Sciences', '725 Commonwealth Ave', '2024-11-01', '12:00:00', '14:00:00', 'Faculty'),
