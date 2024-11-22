@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify
 from database import get_db_connection
 import sqlite3
 
-RSVP_blueprint = Blueprint('rsvp_bp', __name__)
+rsvp_bp = Blueprint('rsvp_bp', __name__)
 
 # RSVP to event
-@RSVP_blueprint.route('/api/rsvp', methods=['POST'])
+@rsvp_bp.route('/api/rsvp', methods=['POST'])
 def rsvp_event():
     """
     Submits an RSVP for a user to an event.

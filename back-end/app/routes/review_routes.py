@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify
 from database import get_db_connection
 import sqlite3
 
-review_blueprint = Blueprint('review_bp', __name__)
+review_bp = Blueprint('review_bp', __name__)
 
-@review_blueprint.route('/api/review', methods=['POST'])
+@review_bp.route('/api/review', methods=['POST'])
 def give_feedback():
     """
     Submits a review for an event.

@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify
 from database import get_db_connection
 import sqlite3
 
-favorite_blueprint = Blueprint('fav_bp', __name__)
+fav_bp = Blueprint('fav_bp', __name__)
 
 # Favorite an event
-@favorite_blueprint.route('/api/favorites', methods=['POST'])
+@fav_bp.route('/api/favorites', methods=['POST'])
 def favorite_event():
     """
     Adds an event to a user's favorites.
@@ -41,7 +41,7 @@ def favorite_event():
         return jsonify({'error': 'Failed to add favorite', 'details': str(e)}), 500
 
 # RETRIEVE all favorite events for specified user id
-@favorite_blueprint.route('/api/favorites/<int:user_id>', methods=["GET"])
+@fav_bp.route('/api/favorites/<int:user_id>', methods=["GET"])
 def user_favorites(user_id):
     """
     user_favorites(user_id) retrieves a list of a specified user's favorited events by user_id.

@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify
 from database import get_db_connection
 import sqlite3
 
-user_blueprint = Blueprint('user_bp', __name__)
+user_bp = Blueprint('user_bp', __name__)
 
-@user_blueprint.route('/api/users', methods=['GET'])
+@user_bp.route('/api/users', methods=['GET'])
 def get_users():
     """
     get_users() retrieves all users from the User table.
@@ -21,7 +21,7 @@ def get_users():
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
     
-@user_blueprint.route('/api/update_preferences', methods=['PUT'])
+@user_bp.route('/api/update_preferences', methods=['PUT'])
 def update_preferences():
     """
     Updates user preferences such as diet and preferred language.

@@ -4,14 +4,14 @@ from google.auth.transport import requests
 from database import get_db_connection
 import os
 
-google_oauth_blueprint = Blueprint('oauth_bp', __name__)
+oauth_bp = Blueprint('oauth_bp', __name__)
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 if not GOOGLE_CLIENT_ID:
     raise ValueError("No GOOGLE_CLIENT_ID set for Flask application")
                      
-@google_oauth_blueprint.route('/api/google-login', methods=['POST'])
+@oauth_bp.route('/api/google-login', methods=['POST'])
 def google_login():
     """
     Handles Google OAuth login. Only specific domains (e.g., @bu.edu) are allowed.
@@ -69,7 +69,7 @@ def google_login():
     except Exception as e:
         return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
 
-@google_oauth_blueprint.route('/api/protected-route', methods=['GET'])
+@oauth_bp.route('/api/protected-route', methods=['GET'])
 def protected_route():
     """
     Example of a protected route that checks user session.

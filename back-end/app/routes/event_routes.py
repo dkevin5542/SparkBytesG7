@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify
 from database import get_db_connection
 import sqlite3
 
-event_blueprint = Blueprint('event_bp', __name__)
+event_bp = Blueprint('event_bp', __name__)
 
 # CREATE event
-@event_blueprint.route('/api/events', methods=['POST'])
+@event_bp.route('/api/events', methods=['POST'])
 def create_event():
     """
     create_event() creates a new event in the Event table.
@@ -34,7 +34,7 @@ def create_event():
     description = data.get('description')
     event_date = data.get('date')
     location = data.get('location')
-    user_id = data.get('user_id', 1)
+    user_id = data.get('user_id', '1234567890')
     food_type = data.get('food_type', 'Snacks')
     address = data.get('address', 'N/A')
     start_time = data.get('start_time', '00:00:00')
@@ -60,7 +60,7 @@ def create_event():
         return jsonify({'error': 'Failed to create event', 'details': str(e)}), 500
 
 # RETRIEVE all events
-@event_blueprint.route('/api/events', methods=['GET'])
+@event_bp.route('/api/events', methods=['GET'])
 def get_events():
     """
     get_events() retrieves all events from the Event table as a paginated list of events.
@@ -149,7 +149,7 @@ def get_events():
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 
 # RETRIEVE an event by ID
-@event_blueprint.route('/api/events/<int:event_id>', methods=['GET'])
+@event_bp.route('/api/events/<int:event_id>', methods=['GET'])
 def get_event(event_id):
     """
     get_event(event_id) retrieves an event from the Event table by specifying the event_id.
@@ -176,7 +176,7 @@ def get_event(event_id):
         return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
     
 # UPDATE event
-@event_blueprint.route('/api/events/<int:event_id>', methods=['PUT'])
+@event_bp.route('/api/events/<int:event_id>', methods=['PUT'])
 def update_event(event_id):
     """
     update_event(event_id) will update the fields of the specified event.
@@ -241,7 +241,7 @@ def update_event(event_id):
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
         
 # DELETE event
-@event_blueprint.route('/api/events/<int:event_id>', methods=['DELETE'])
+@event_bp.route('/api/events/<int:event_id>', methods=['DELETE'])
 def del_event(event_id):
     """
     del_event(event_id) will delete the specified event.
