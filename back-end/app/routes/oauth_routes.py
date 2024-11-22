@@ -19,7 +19,7 @@ def google_login():
 
     try:
         # Verify the token with Google's OAuth2 API
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
+        idinfo = id_token.verify_oauth2_token(token, requests.Request())
 
         # Check if the token is issued by Google
         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
