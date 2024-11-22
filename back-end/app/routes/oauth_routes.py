@@ -31,7 +31,7 @@ def google_login():
             return jsonify({'message': 'Wrong issuer.'}), 401
 
         # Extract user information
-        google_user_id = idinfo['sub']
+        user_id = idinfo['sub'] # unique Google ID
         email = idinfo['email']
         name = idinfo.get('name', 'Anonymous')
 
@@ -42,25 +42,21 @@ def google_login():
         # Check if user exists; create user if not found
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM User WHERE google_id = ?", (google_user_id,))
+            cursor.execute("SELECT * FROM User WHERE user_id = ?", (user_id,))
             user = cursor.fetchone()
 
             if not user:
                 cursor.execute(
                     """
-                    INSERT INTO User (google_id, email, diet, preferred_language, role)
-                    VALUES (?, ?, 'Omnivore', 'English', 'Student')
+                    INSERT INTO User (user_id, email, name, diet, preferred_language, role)
+                    VALUES (?, ?, ?, 'Omnivore', 'English', 'Student')
                     """,
-                    (google_user_id, email)
+                    (user_id, email, name)
                 )
                 conn.commit()
-                user_id = cursor.lastrowid
-            else:
-                user_id = user['user_id']
 
-        # Store user_id and email in session
+        # Store user_id in session
         session['user_id'] = user_id
-        session['email'] = email
 
         return jsonify({
             'message': 'Login successful',

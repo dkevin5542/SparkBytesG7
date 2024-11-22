@@ -1,9 +1,10 @@
 -- User information
 
 CREATE TABLE User(
-    user_id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    user_id TEXT PRIMARY KEY,
     bu_id varchar(10) UNIQUE DEFAULT 'U123456789',
     email varchar(255) UNIQUE NOT NULL,
+    name TEXT,
     bio TEXT,
     interests TEXT,
     diet TEXT CHECK(diet IN ('Vegetarian', 'Vegan', 'Omnivore', 'Pescatarian', 'Other')) DEFAULT 'Omnivore',
