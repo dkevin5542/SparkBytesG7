@@ -36,7 +36,6 @@ interface Event {
   title: string;
   description: string;
   date: string;
-  event_id: number | "";
   location: string;
   food_type: string[];
   address: string;

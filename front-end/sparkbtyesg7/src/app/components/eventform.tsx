@@ -7,7 +7,7 @@ interface Event {
   title: string;
   description: string;
   date: string;
-  event_id: number | "";
+  //event_id: number | "";
   location: string;
   food_type: string[];
   address: string;
@@ -38,7 +38,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate }) =>
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
-  const [eventId, setEventId] = useState<number | ''>('');
+  //const [eventId, setEventId] = useState<number | ''>('');
   const [location, setLocation] = useState('');
   const [foodType, setFoodType] = useState<string[]>([]);
   const [address, setAddress] = useState('');
@@ -64,7 +64,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate }) =>
       title,
       description,
       date,
-      event_id: eventId === '' ? '' : Number(eventId),
       location,
       food_type: foodType,
       address,
@@ -81,7 +80,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate }) =>
     setTitle('');
     setDescription('');
     setDate('');
-    setEventId('');
     setLocation('');
     setFoodType([]);
     setAddress('');
@@ -111,14 +109,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate }) =>
         value={date}
         onChange={(e) => setDate(e.target.value)}
         required
-      />
-      <input
-        type="number"
-        value={eventId}
-        onChange={(e) => setEventId(Number(e.target.value))}
-        placeholder="Event ID"
-        required
-      />
+      /> 
       <input
         type="text"
         value={location}
