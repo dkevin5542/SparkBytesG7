@@ -5,12 +5,7 @@ from database import get_db_connection
 import os
 
 oauth_bp = Blueprint('oauth_bp', __name__)
-
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
-
-if not GOOGLE_CLIENT_ID:
-    raise ValueError("No GOOGLE_CLIENT_ID set for Flask application")
-                     
+         
 @oauth_bp.route('/api/google-login', methods=['POST'])
 def google_login():
     """
