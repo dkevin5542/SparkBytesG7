@@ -3,12 +3,6 @@ import React, { useState } from 'react';
 import CreateEventForm from "../components/eventform";
 import '@/app/styles/formpage.css';
 
-interface Event {
-  title: string;
-  date: string;
-  location: string;
-}
-
 /**
  * CreateEventPage Component
  *
@@ -42,11 +36,14 @@ interface Event {
   title: string;
   description: string;
   date: string;
+  event_id: number | "";
   location: string;
-  food_type: string;
+  food_type: string[];
   address: string;
   start_time: string;
   end_time: string;
+  quantity: number | "";
+  event_type?: string;
 }
 
 export default function CreateEventPage() {
@@ -72,6 +69,7 @@ export default function CreateEventPage() {
         console.error('Failed to create event');
       }
     } catch (error) {
+      setMessage("An error occurred. Please try again later.");
       console.error("Error creating event:", error);
     }
   };
