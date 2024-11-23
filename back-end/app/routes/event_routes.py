@@ -8,7 +8,7 @@ event_bp = Blueprint('event_bp', __name__)
 @event_bp.route('/api/events', methods=['POST'])
 def create_event():
     """
-    create_event() creates a new event in the Event table.
+    create_event() creates a new event in the Event table. Now supports multiple food types for a single event.
 
     Expected JSON Payload:
     {
@@ -17,10 +17,10 @@ def create_event():
         "date": "YYYY-MM-DD",
         "location": "Event Location",
         "user_id": integer,
-        "food_type": Optional string,
-        "address": Optional string,
-        "start_time": Optional string (HH:MM:SS),
-        "end_time": Optional string (HH:MM:SS)
+        "food_types": list of strings,
+        "address": string,
+        "start_time": string (HH:MM:SS),
+        "end_time": string (HH:MM:SS)
         "quantity": integer
     }
 
@@ -35,7 +35,7 @@ def create_event():
     event_date = data.get('date')
     location = data.get('location')
     user_id = data.get('user_id', '1234567890')
-    food_type = data.get('food_type', 'Snacks')
+    food_types = data.get('food_types', [])
     address = data.get('address', 'N/A')
     start_time = data.get('start_time', '00:00:00')
     end_time = data.get('end_time', '23:59:59')
@@ -48,12 +48,21 @@ def create_event():
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO Event (user_id, title, description, food_type, location, address, event_date, start_time, end_time, quantity, event_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO Event (user_id, title, description, location, event_date, quantity, event_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                (user_id, title, description, food_type, location, address, event_date, start_time, end_time, quantity, event_type)
+                (user_id, title, description, location, event_date, quantity, event_type)
             )
             event_id = cursor.lastrowid
+
+            for food_type in food_types:
+                cursor.execute(
+                    """
+                    INSERT INTO EventFoodTypes (event_id, food_type_id)
+                    SELECT ?, food_type_id FROM FoodTypes WHERE food_type_name = ?
+                    """,
+                    (event_id, food_type)
+                )
 
         return jsonify({'message': 'Event created successfully', 'event_id': event_id}), 201
     except sqlite3.Error as e:
@@ -102,7 +111,14 @@ def get_events():
         end_time = request.args.get('end_time')
 
         # Construct SQL query
-        query = "SELECT * FROM Event WHERE 1=1"
+        query = """
+            SELECT e.event_id, e.title, e.description, e.event_date, e.location, e.event_type,
+                   GROUP_CONCAT(f.food_type_name, ', ') AS food_types
+            FROM Event e
+            LEFT JOIN EventFoodTypes ef ON e.event_id = ef.event_id
+            LEFT JOIN FoodTypes f ON ef.food_type_id = f.food_type_id
+            WHERE 1=1
+            """
         params = []
 
         # Add filters if provided
@@ -112,7 +128,14 @@ def get_events():
             params.extend([f"%{keyword}%", f"%{keyword}%"])
         
         if dietary_needs:
-            query += " AND food_type = ?"
+            query += """
+                AND e.event_id IN (
+                    SELECT ef.event_id
+                    FROM EventFoodTypes ef
+                    JOIN FoodTypes f ON ef.food_type_id = f.food_type_id
+                    WHERE f.food_type_name = ?
+                )
+                """
             params.append(dietary_needs)
         
         if date:
@@ -134,16 +157,14 @@ def get_events():
         # Add pagination
         query += " LIMIT ? OFFSET ?"
         params.extend([per_page, offset])
-        print("QUERY:", query)
-        print("PARAMS:", params)
 
         with get_db_connection() as conn:
-            print("Database connected successfully")
             cursor = conn.cursor()
             cursor.execute(query, params)
             events = cursor.fetchall()
 
         event_list = [dict(row) for row in events]
+        
         return jsonify({'page': page, 'per_page': per_page, 'total_events': len(event_list), 'events': event_list}), 200
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500

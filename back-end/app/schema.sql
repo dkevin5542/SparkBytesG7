@@ -33,6 +33,30 @@ CREATE TABLE Event (
 );
 
 -- Food types 
+CREATE TABLE FoodTypes (
+    food_type_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    food_type_name TEXT UNIQUE NOT NULL
+);
+
+INSERT INTO FoodTypes (food_type_name) VALUES 
+('Snacks'), 
+('Vegetarian'), 
+('Vegan'), 
+('Gluten-Free'), 
+('Kosher'), 
+('Halal'), 
+('Other');
+
+-- Assoc table food types and events
+CREATE TABLE EventFoodTypes (
+    event_id INTEGER NOT NULL,
+    food_type_id INTEGER NOT NULL,
+    PRIMARY KEY (event_id, food_type_id),
+    FOREIGN KEY (event_id) REFERENCES Event(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (food_type_id) REFERENCES FoodTypes(food_type_id) ON DELETE CASCADE
+);
+
+-- 
 
 -- Favorite event information
 CREATE TABLE Favorite (
@@ -74,12 +98,34 @@ INSERT INTO User (user_id, bu_id, email, diet, preferred_language, role) VALUES
     ('daniele_google_id', 'U423456789', 'daniele@bu.edu', 'Pescatarian', 'Arabic', 'Faculty'),
     ('evief_google_id', 'U523456789', 'evief@bu.edu', 'Other', 'English', 'Faculty');
 
-INSERT INTO Event (user_id, title, description, food_type, quantity, location, address, event_date, start_time, end_time, event_type) VALUES
-    ('alvin_google_id', 'Vegetarian Event', 'A gathering for all vegetarian enthusiasts.', 'Vegetarian', 35, 'College of Arts and Sciences', '725 Commonwealth Ave', '2024-11-01', '12:00:00', '14:00:00', 'Faculty'),
-    ('barry_google_id', 'Vegan Lunch', 'Enjoy vegan dishes from around the world.', 'Vegan', 30, 'George Sherman Union', '855 Commonwealth Ave', '2024-11-02', '13:00:00', '15:00:00', 'Faculty'),
-    ('charlie_google_id', 'Fine Arts Dinner', 'Dinner event with mixed food choices.', 'Other', 50, 'College of Fine Arts', '789 Maple Ave', '2024-11-03', '18:00:00', '20:00:00', 'Faculty'),
-    ('daniele_google_id', 'BU Beach Picnic', 'Picnic with snacks.', 'Snacks', 17, 'BU Beach', '270 Bay State Road', '2024-11-04', '10:00:00', '12:00:00', 'Student'),
-    ('evief_google_id', 'Snacks and Books', 'Casual book club meetup with snacks.', 'Snacks', 10, 'Mugar Library', '775 Commonwealth Avenue', '2024-11-05', '15:00:00', '17:00:00', 'Student');
+INSERT INTO Event (user_id, title, description, quantity, location, address, event_date, start_time, end_time, event_type) VALUES
+    ('alvin_google_id', 'Vegetarian Event', 'A gathering for all vegetarian enthusiasts.', 35, 'College of Arts and Sciences', '725 Commonwealth Ave', '2024-11-01', '12:00:00', '14:00:00', 'Faculty'),
+    ('barry_google_id', 'Vegan Lunch', 'Enjoy vegan dishes from around the world.', 30, 'George Sherman Union', '855 Commonwealth Ave', '2024-11-02', '13:00:00', '15:00:00', 'Faculty'),
+    ('charlie_google_id', 'Fine Arts Dinner', 'Dinner event with mixed food choices.', 50, 'College of Fine Arts', '789 Maple Ave', '2024-11-03', '18:00:00', '20:00:00', 'Faculty'),
+    ('daniele_google_id', 'BU Beach Picnic', 'Picnic with snacks.', 'Snacks', 17, '270 Bay State Road', '2024-11-04', '10:00:00', '12:00:00', 'Student'),
+    ('evief_google_id', 'Snacks and Books', 'Casual book club meetup with snacks.', 10, 'Mugar Library', '775 Commonwealth Avenue', '2024-11-05', '15:00:00', '17:00:00', 'Student');
+
+-- Vegetarian Event
+INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
+    (1, 2); -- Vegetarian
+
+-- Vegan Lunch (Vegan and Vegetarian)
+INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
+    (2, 2), -- Vegetarian
+    (2, 3); -- Vegan
+
+-- Fine Arts Dinner
+INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
+    (3, 7); -- Other
+
+-- BU Beach Picnic
+INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
+    (4, 1); -- Snacks
+
+-- Snacks and Books
+INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
+    (5, 1); -- Snacks
+
 
 INSERT INTO Favorite (user_id, event_id) VALUES
     ('alvin_google_id', 2),
