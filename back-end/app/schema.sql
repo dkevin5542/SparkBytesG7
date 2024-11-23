@@ -15,7 +15,7 @@ CREATE TABLE User(
 
 -- Event information
 CREATE TABLE Event (
-    event_id INTEGER PRIMARY KEY,
+    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -31,6 +31,8 @@ CREATE TABLE Event (
     event_type TEXT CHECK(event_type IN ('Faculty', 'Student')) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
+
+-- Food types 
 
 -- Favorite event information
 CREATE TABLE Favorite (

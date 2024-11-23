@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from database import get_db_connection
 import sqlite3
 
@@ -59,3 +59,51 @@ def update_preferences():
         return jsonify({"message": "User preferences updated successfully"}), 200
     except sqlite3.Error as e:
         return jsonify({"error": "Database error occurred", "details": str(e)}), 500
+
+@user_bp.route('/api/create_profile', methods=['POST'])
+def create_profile():
+    """
+    Updates the user's profile information (name, bio, and interests).
+    Requires the user to be logged in (session should have user_id).
+    """
+
+    # Check if user is logged in
+    user_id = session.get('user_id')
+    print('user_id is ', user_id)
+
+    if not user_id:
+        return jsonify({'message': 'Unauthorized. Please log in.'}), 401
+
+    data = request.get_json()
+    
+    # Retrieve name, bio, and interests from the request
+    name = data.get('name')
+    bio = data.get('bio')
+    interests = data.get('interests')
+
+    # Validate input data
+    if not name or not isinstance(name, str):
+        return jsonify({'message': 'Invalid name'}), 400
+    if bio is not None and not isinstance(bio, str):
+        return jsonify({'message': 'Invalid bio'}), 400
+    if interests is not None and not isinstance(interests, str):
+        return jsonify({'message': 'Invalid interests'}), 400
+
+    try:
+        # Update the user's profile in the database
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                UPDATE User
+                SET name = ?, bio = ?, interests = ?
+                WHERE user_id = ?
+                """,
+                (name, bio, interests, user_id)
+            )
+            conn.commit()
+
+        return jsonify({'message': 'Profile created successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
