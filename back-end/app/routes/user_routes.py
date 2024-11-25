@@ -63,7 +63,7 @@ def update_preferences():
 @user_bp.route('/api/create_profile', methods=['POST'])
 def create_profile():
     """
-    Updates the user's profile information (name, bio, and interests).
+    Updates the user's profile information (name, bio, interests, BU ID, diet and language).
     Requires the user to be logged in (session should have user_id).
     """
 
@@ -75,19 +75,34 @@ def create_profile():
         return jsonify({'message': 'Unauthorized. Please log in.'}), 401
 
     data = request.get_json()
+    print(data)
     
     # Retrieve name, bio, and interests from the request
     name = data.get('name')
     bio = data.get('bio')
     interests = data.get('interests')
+    bu_id = data.get('buID')
+    diet = data.get('diet')
+    language = data.get('language')
 
     # Validate input data
-    if not name or not isinstance(name, str):
+    if not isinstance(name, str) or not name.strip():
         return jsonify({'message': 'Invalid name'}), 400
+
     if bio is not None and not isinstance(bio, str):
         return jsonify({'message': 'Invalid bio'}), 400
+
     if interests is not None and not isinstance(interests, str):
         return jsonify({'message': 'Invalid interests'}), 400
+
+    if not isinstance(bu_id, str) or not bu_id.strip():
+        return jsonify({'message': 'Invalid BU ID'}), 400
+
+    if diet is not None and not isinstance(diet, str):
+        return jsonify({'message': 'Invalid diet'}), 400
+
+    if language is not None and not isinstance(language, str):
+        return jsonify({'message': 'Invalid language'}), 400
 
     try:
         # Update the user's profile in the database
@@ -96,10 +111,10 @@ def create_profile():
             cursor.execute(
                 """
                 UPDATE User
-                SET name = ?, bio = ?, interests = ?
+                SET name = ?, bio = ?, interests = ?, bu_id = ?, diet = ?, preferred_language = ?
                 WHERE user_id = ?
                 """,
-                (name, bio, interests, user_id)
+                (name, bio, interests, bu_id, diet, language, user_id)
             )
             conn.commit()
 

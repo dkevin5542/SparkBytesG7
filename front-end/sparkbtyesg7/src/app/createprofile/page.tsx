@@ -9,7 +9,7 @@ const CreateProfile: React.FC = () => {
     name: '',
     bio: '',
     interests: '',
-    buId: '',
+    buID: '',
     diet: '',
     language: '',
   });
@@ -85,8 +85,8 @@ const CreateProfile: React.FC = () => {
             BU ID:
             <input
               type="text"
-              name="buId"
-              value={profileData.buId}
+              name="buID"
+              value={profileData.buID}
               onChange={handleChange}
               required
             />
