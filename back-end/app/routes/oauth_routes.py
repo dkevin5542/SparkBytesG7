@@ -84,8 +84,7 @@ def protected_route():
     if 'user_id' in session:
         return jsonify({
             'message': 'You are logged in',
-            'user_id': session['user_id'],
-            'email': session['email']
+            'user_id': session['user_id']
         }), 200
     else:
         return jsonify({'message': 'Not authenticated'}), 401
