@@ -121,4 +121,46 @@ def create_profile():
         return jsonify({'message': 'Profile created successfully'}), 200
 
     except Exception as e:
-        return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
+        print(f"Error occurred during profile creation: {e}")  # Log the error
+        return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
+    
+    
+@user_bp.route('/api/get_profile', methods=['GET'])
+def get_profile():
+    """
+    Fetch the user's profile information.
+    Requires the user to be logged in (session should have user_id).
+    """
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'Unauthorized. Please log in.'}), 401
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT name, bio, interests, bu_id, diet, preferred_language
+                FROM User
+                WHERE user_id = ?
+                """,
+                (user_id,)
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                return jsonify({'message': 'User not found'}), 404
+
+            # Map the data to a dictionary
+            user_profile = {
+                'name': user[0],
+                'bio': user[1],
+                'interests': user[2],
+                'buID': user[3],
+                'diet': user[4],
+                'language': user[5],
+            }
+            return jsonify(user_profile), 200
+
+    except Exception as e:
+        return jsonify({'message': 'An error occurred', 'details': str(e)}), 500

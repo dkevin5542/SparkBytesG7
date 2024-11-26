@@ -53,8 +53,6 @@ def google_login():
         # Store user_id in session
         session['user_id'] = user_id
 
-        print('user_id is:')
-        print(session['user_id'])
         return jsonify({
             'message': 'Login successful',
             'user_id': user_id,

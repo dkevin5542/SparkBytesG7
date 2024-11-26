@@ -69,7 +69,7 @@ def create_event():
         return jsonify({'error': 'Failed to create event', 'details': str(e)}), 500
 
 # RETRIEVE all events
-@event_bp.route('/api/events', methods=['GET'])
+@event_bp.route('/api/getevents', methods=['GET'])
 def get_events():
     """
     get_events() retrieves all events from the Event table as a paginated list of events.
