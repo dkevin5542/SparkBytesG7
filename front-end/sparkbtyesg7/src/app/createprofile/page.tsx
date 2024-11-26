@@ -5,41 +5,41 @@ import '@/app/styles/createprofile.css';
 
 const CreateProfile: React.FC = () => {
   const router = useRouter();
-  //add more fields if required
   const [profileData, setProfileData] = useState({
     name: '',
     bio: '',
-    interests: ''
+    interests: '',
+    buID: '',
+    diet: '',
+    language: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setProfileData(prevData => ({
+    setProfileData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      //need an api route that stores new user profile
-      const response = await fetch('http://localhost:5002/api/create-profile', {
+      const response = await fetch('http://localhost:5002/api/create_profile', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(profileData)
+        body: JSON.stringify(profileData),
       });
       const data = await response.json();
 
       if (data.success) {
         console.log('Profile created successfully');
         router.push('/home');
-        //uncomment once profile page is created
+        // Uncomment once profile page is created
         // router.push('/profile');
-
       } else {
         console.error('Failed to create profile:', data.message);
       }
@@ -81,16 +81,34 @@ const CreateProfile: React.FC = () => {
               onChange={handleChange}
             />
           </label>
-          {/*Follow this format to create new text inputs */}
-          {/* <label>
-            Interests:
+          <label>
+            BU ID:
             <input
               type="text"
-              name="interests"
-              value={profileData.interests}
+              name="buID"
+              value={profileData.buID}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Diet:
+            <input
+              type="text"
+              name="diet"
+              value={profileData.diet}
               onChange={handleChange}
             />
-          </label> */}
+          </label>
+          <label>
+            Language:
+            <input
+              type="text"
+              name="language"
+              value={profileData.language}
+              onChange={handleChange}
+            />
+          </label>
           <button type="submit">Create Profile</button>
         </form>
       </div>
