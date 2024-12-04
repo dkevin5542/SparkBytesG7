@@ -72,7 +72,7 @@ def create_profile():
     print('user_id is ', user_id)
 
     if not user_id:
-        return jsonify({'message': 'Unauthorized. Please log in.'}), 401
+        return jsonify({'success': False, 'message': 'Unauthorized. Please log in.'}), 401
 
     data = request.get_json()
     print(data)
@@ -87,22 +87,22 @@ def create_profile():
 
     # Validate input data
     if not isinstance(name, str) or not name.strip():
-        return jsonify({'message': 'Invalid name'}), 400
+        return jsonify({'success': False, 'message': 'Invalid name'}), 400
 
     if bio is not None and not isinstance(bio, str):
-        return jsonify({'message': 'Invalid bio'}), 400
+        return jsonify({'success': False, 'message': 'Invalid bio'}), 400
 
     if interests is not None and not isinstance(interests, str):
-        return jsonify({'message': 'Invalid interests'}), 400
+        return jsonify({'success': False, 'message': 'Invalid interests'}), 400
 
     if not isinstance(bu_id, str) or not bu_id.strip():
-        return jsonify({'message': 'Invalid BU ID'}), 400
+        return jsonify({'success': False, 'message': 'Invalid BU ID'}), 400
 
     if diet is not None and not isinstance(diet, str):
-        return jsonify({'message': 'Invalid diet'}), 400
+        return jsonify({'success': False, 'message': 'Invalid diet'}), 400
 
     if language is not None and not isinstance(language, str):
-        return jsonify({'message': 'Invalid language'}), 400
+        return jsonify({'success': False, 'message': 'Invalid language'}), 400
 
     try:
         # Update the user's profile in the database
@@ -118,11 +118,18 @@ def create_profile():
             )
             conn.commit()
 
-        return jsonify({'message': 'Profile created successfully'}), 200
+        # Check if the update was successful
+        if cursor.rowcount > 0:
+            return jsonify({'success': True, 'message': 'Profile created successfully'}), 200
+        else:
+            return jsonify({'success': False, 'message': 'No profile was updated. User not found.'}), 404
 
     except Exception as e:
         print(f"Error occurred during profile creation: {e}")  # Log the error
-        return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
+        return jsonify({'success': False, 'message': 'An error occurred', 'details': str(e)}), 500
+
+    
+    
     
     
 @user_bp.route('/api/get_profile', methods=['GET'])
@@ -164,3 +171,23 @@ def get_profile():
 
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
+    
+@user_bp.route('/api/has_profile', methods=['GET'])
+def has_profile():
+    """
+    Check if the logged-in user already has a profile.
+    """
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'has_profile': False}), 401  # User not logged in
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM UserProfile WHERE user_id = ?", (user_id,))
+            result = cursor.fetchone()
+            has_profile = result[0] > 0
+            return jsonify({'has_profile': has_profile}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+

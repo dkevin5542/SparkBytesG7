@@ -1,13 +1,14 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
 
-// AuthProvider Component
-// Wraps the app with GoogleOAuthProvider to provide Google OAuth functionality
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
+// Google OAuth Provider Component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
     <GoogleOAuthProvider clientId="140220835320-hp2l5648gotpt7u322qks2eaf7k8ggvn.apps.googleusercontent.com">
@@ -16,7 +17,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-// Function to check if the user is authenticated
+// Check if user is authenticated
 export const isAuthenticated = async (): Promise<boolean> => {
   try {
     const response = await fetch('http://localhost:5002/api/protected-route', {
@@ -38,28 +39,63 @@ export const isAuthenticated = async (): Promise<boolean> => {
   }
 };
 
-// GoogleAuthButton Component
+// Check if user already has a profile
+export const checkProfile = async (): Promise<boolean> => {
+  try {
+    const response = await fetch('http://localhost:5002/api/has_profile', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Profile exists:', data.has_profile);
+      return data.has_profile; // True if profile exists
+    } else {
+      console.error('Error checking profile existence');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error checking profile:', error);
+    return false;
+  }
+};
+
+// Google Authentication Button Component
 export const GoogleAuthButton: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
-  const [authError, setAuthError] = useState<string | null>(null); // Track login error
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Check if user is already authenticated on component mount
+  // Check authentication and profile existence on mount
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuthAndProfile = async () => {
       const authenticated = await isAuthenticated();
       if (authenticated) {
-        console.log('User already authenticated');
-        router.push('/createprofile'); // Redirect to profile creation if already logged in
+        const hasProfile = await checkProfile();
+        if (hasProfile) {
+          console.log('User already has a profile');
+          router.push('/profile'); // Redirect to profile page
+        } else {
+          console.log('User authenticated but needs to create a profile');
+          router.push('/createprofile'); // Redirect to create profile page
+        }
       }
     };
-    checkAuth();
+    checkAuthAndProfile();
   }, [router]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Redirect to the create profile page if login is successful
-      router.push('/createprofile');
+      const redirectAfterLogin = async () => {
+        const hasProfile = await checkProfile();
+        if (hasProfile) {
+          router.push('/profile');
+        } else {
+          router.push('/createprofile');
+        }
+      };
+      redirectAfterLogin();
     }
   }, [isLoggedIn, router]);
 
@@ -79,14 +115,14 @@ export const GoogleAuthButton: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token: idToken }),
-        credentials: 'include', // Include cookies for session handling
+        credentials: 'include',
       });
 
       const data = await response.json();
 
       if (response.ok && data.message === 'Login successful') {
         console.log('User logged in:', data);
-        setIsLoggedIn(true); // Update login state
+        setIsLoggedIn(true);
       } else {
         console.error('Login failed:', data.message);
         setAuthError(data.message || 'Login failed');
@@ -108,9 +144,8 @@ export const GoogleAuthButton: React.FC = () => {
         onSuccess={handleLoginSuccess}
         onError={handleLoginError}
       />
-      {/* {authError && <p className="error-message">{authError}</p>} */}
+      {authError && <p className="error-message">{authError}</p>}
     </div>
   );
 };
-
 

@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/createprofile.css';
@@ -13,6 +14,7 @@ const CreateProfile: React.FC = () => {
     diet: '',
     language: '',
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -24,6 +26,7 @@ const CreateProfile: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null); // Clear any previous error messages
     try {
       const response = await fetch('http://localhost:5002/api/create_profile', {
         method: 'POST',
@@ -33,17 +36,23 @@ const CreateProfile: React.FC = () => {
         credentials: 'include',
         body: JSON.stringify(profileData),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create profile.');
+      }
+
       const data = await response.json();
 
       if (data.success) {
         console.log('Profile created successfully');
-        // router.push('/home');
-        router.push('/profile');
+        router.push('/profile'); // Redirect to profile page
       } else {
-        console.error('Failed to create profile:', data.message);
+        setErrorMessage(data.message || 'Failed to create profile.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
+      setErrorMessage(error.message || 'An unexpected error occurred.');
     }
   };
 
@@ -51,6 +60,7 @@ const CreateProfile: React.FC = () => {
     <div className="create-profile-container">
       <div className="create-profile-card">
         <h1>Create Your Profile</h1>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <form onSubmit={handleSubmit}>
           <label>
             Name:
