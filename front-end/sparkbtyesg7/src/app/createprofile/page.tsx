@@ -37,9 +37,8 @@ const CreateProfile: React.FC = () => {
 
       if (data.success) {
         console.log('Profile created successfully');
-        router.push('/home');
-        // Uncomment once profile page is created
-        // router.push('/profile');
+        // router.push('/home');
+        router.push('/profile');
       } else {
         console.error('Failed to create profile:', data.message);
       }
