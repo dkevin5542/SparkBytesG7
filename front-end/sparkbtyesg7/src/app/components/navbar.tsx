@@ -1,4 +1,4 @@
-"use client"; //Using client-side features in Next.js
+"use client";
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -38,12 +38,30 @@ export const Navbar: React.FC = () => {
     setDropdownVisible(!dropdownVisible);
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5002/api/google-logout', {
+        method: 'POST',
+        credentials: 'include', // Include cookies for session handling
+      });
+
+      if (response.ok) {
+        console.log('Logout successful');
+        router.push('/login'); // Redirect to login page
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-brand" onClick={() => handleNavigation('/')}>Spark Bytes</div>
       <ul className="navbar-links">
         <li><button onClick={() => handleNavigation('/')}>HOME</button></li>
-        <li><button onClick={() => handleNavigation('/about')}>ABOUT</button></li> {/* Corrected route */}
+        <li><button onClick={() => handleNavigation('/about')}>ABOUT</button></li>
         <li><button onClick={() => handleNavigation('/create-event')}>CREATE EVENT</button></li>
         <li><button onClick={() => handleNavigation('/contact')}>CONTACT</button></li>
         <li className="dropdown">
@@ -55,16 +73,13 @@ export const Navbar: React.FC = () => {
               <li onClick={() => handleNavigation('/profile/edit')}>EDIT PROFILE</li>
               <li onClick={() => handleNavigation('/profile/posted-events')}>POSTED EVENTS</li>
               <li onClick={() => handleNavigation('/profile/favorites')}>FAVORITES</li>
-              <li onClick={() => handleNavigation('/logout')}>LOGOUT</li>
+              <li onClick={handleLogout}>LOGOUT</li> {/* Trigger logout */}
             </ul>
           )}
         </li>
-        {/* <li><button onClick={() => handleNavigation('/login')}>Login</button></li> */}
-
       </ul>
     </nav>
   );
 };
 
-/* Exporting to use in other parts of the application */
 export default Navbar;
