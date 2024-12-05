@@ -27,6 +27,7 @@ def get_role():
     Endpoint to retrieve the role of a user based on their user_id stored in the session.
     """
     user_id = session.get('user_id')
+    print(user_id)
     if not user_id:
         return jsonify({'message': 'Unauthorized. Please log in.'}), 401
     
