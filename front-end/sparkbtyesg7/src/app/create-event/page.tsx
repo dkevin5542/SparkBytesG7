@@ -1,5 +1,5 @@
 "use client"; // Using client-side features in Next.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import CreateEventForm from "../components/eventform";
 import '@/app/styles/formpage.css';
 
@@ -37,7 +37,7 @@ interface Event {
   description: string;
   date: string;
   location: string;
-  food_type: string[];
+  food_types: string[];
   address: string;
   start_time: string;
   end_time: string;
@@ -47,25 +47,50 @@ interface Event {
 
 export default function CreateEventPage() {
   const [message, setMessage] = useState<string | null>(null);
+  const [eventType, setEventType] = useState<string>("");
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5002/api/user_role", {
+          method: "GET",
+          credentials: "include", 
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setEventType(data.role); // Set the role as event type
+        } else {
+          console.error("Failed to fetch user role");
+        }
+      } catch (error) {
+        console.error("Error fetching role:", error);
+      }
+    };
+
+    fetchRole();
+  }, []);
 
   const handleCreateEvent = async (newEvent: Event) => {
     try {
-      const response = await fetch('http://127.0.0.1:5002/api/events', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:5002/api/events", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(newEvent)
+        body: JSON.stringify(newEvent),
       });
 
       if (response.ok) {
-        setMessage(`Event "${newEvent.title}" created successfully!`);
-        console.log("Event Created: ", newEvent);
-        
+        const responseData = await response.json();
+        setMessage(
+          `Event "${newEvent.title}" created successfully! Event ID: ${responseData.event_id}`
+        );
+
         // Clear message after 3 seconds
         setTimeout(() => setMessage(null), 3000);
       } else {
-        console.error('Failed to create event');
+        console.error("Failed to create event");
       }
     } catch (error) {
       setMessage("An error occurred. Please try again later.");
@@ -77,12 +102,12 @@ export default function CreateEventPage() {
     <div className="create-event-page">
       <div className="content">
         <h1>Create an Event</h1>
-        
-        {/* Feedback Message */}
         {message && <div className="feedback-message">{message}</div>}
-        
-        {/* Event Creation Form */}
-        <CreateEventForm onCreate={handleCreateEvent} />
+        {eventType ? (
+          <CreateEventForm onCreate={handleCreateEvent} eventType={eventType} />
+        ) : (
+          <p>Loading user role...</p>
+        )}
       </div>
     </div>
   );
