@@ -20,7 +20,33 @@ def get_users():
         return jsonify(user_list), 200
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
+
+@user_bp.route('/api/user_role', methods=['GET'])
+def get_role():
+    """
+    """
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'Unauthorized. Please log in.'}), 401
     
+    try:
+        with get_db_connection as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT role FROM User WHERE user_id = ?
+                """, (user_id,)
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                return jsonify({'message': 'User not found'}), 404
+        
+            return jsonify(user), 200
+
+    except Exception as e:
+        return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
+
 @user_bp.route('/api/update_preferences', methods=['PUT'])
 def update_preferences():
     """
@@ -127,11 +153,7 @@ def create_profile():
     except Exception as e:
         print(f"Error occurred during profile creation: {e}")  # Log the error
         return jsonify({'success': False, 'message': 'An error occurred', 'details': str(e)}), 500
-
-    
-    
-    
-    
+  
 @user_bp.route('/api/get_profile', methods=['GET'])
 def get_profile():
     """

@@ -42,16 +42,16 @@ def create_event():
     quantity = data.get('quantity', 0)
     event_type = data.get('event_type', 'Faculty')
 
-        # insert to database
+    # insert to database
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO Event (user_id, title, description, location, event_date, quantity, event_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO Event (user_id, title, description, location, address, event_date, start_time, end_time, quantity, event_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (user_id, title, description, location, event_date, quantity, event_type)
+                (user_id, title, description, location, address, event_date, start_time, end_time, quantity, event_type)
             )
             event_id = cursor.lastrowid
 
