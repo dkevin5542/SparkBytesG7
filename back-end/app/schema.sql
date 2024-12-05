@@ -7,9 +7,11 @@ CREATE TABLE User(
     name TEXT,
     bio TEXT,
     interests TEXT,
+    --
     diet TEXT CHECK(diet IN ('Vegetarian', 'Vegan', 'Omnivore', 'Pescatarian', 'Other')) DEFAULT 'Omnivore',
     preferred_language TEXT CHECK(preferred_language IN ('English', 'Mandarin', 'Arabic', 'Spanish')) DEFAULT 'English',
-    role TEXT CHECK(role IN ('Student', 'Faculty')) DEFAULT 'Student'
+    --
+   role TEXT CHECK(role IN ('Student', 'Faculty')) DEFAULT 'Student'
 
 ); 
 
@@ -19,7 +21,6 @@ CREATE TABLE Event (
     user_id TEXT NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    food_type TEXT CHECK(food_type IN ('Snacks', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Kosher', 'Halal', 'Other')) DEFAULT 'Snacks',
     quantity INTEGER DEFAULT 0,
     location VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
@@ -38,6 +39,19 @@ CREATE TABLE FoodTypes (
     food_type_name TEXT UNIQUE NOT NULL
 );
 
+-- Languages
+CREATE TABLE Languages (
+    language_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    language_name TEXT UNIQUE NOT NULL
+);
+
+INSERT INTO Languages (language_name) VALUES
+('English'),
+('Spanish'),
+('Arabic'),
+('Mandarin'),
+('Other');
+
 INSERT INTO FoodTypes (food_type_name) VALUES 
 ('Snacks'), 
 ('Vegetarian'), 
@@ -45,6 +59,9 @@ INSERT INTO FoodTypes (food_type_name) VALUES
 ('Gluten-Free'), 
 ('Kosher'), 
 ('Halal'), 
+('Dairy-Free'),
+('Nut-Free'),
+('Soy-Free'),
 ('Other');
 
 -- Assoc table food types and events
@@ -56,7 +73,25 @@ CREATE TABLE EventFoodTypes (
     FOREIGN KEY (food_type_id) REFERENCES FoodTypes(food_type_id) ON DELETE CASCADE
 );
 
--- 
+-- Assoc table food types (diet) and user
+
+CREATE TABLE UserFoodTypes (
+    user_id TEXT NOT NULL,
+    food_type_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, food_type_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (food_type_id) REFERENCES FoodTypes(food_type_id) ON DELETE CASCADE
+);
+
+-- Assoc table preferred languages (lang) and user
+
+CREATE TABLE UserLanguages (
+    user_id TEXT NOT NULL,
+    language_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, language_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (language_id) REFERENCES Languages(language_id) ON DELETE CASCADE
+);
 
 -- Favorite event information
 CREATE TABLE Favorite (
@@ -125,7 +160,6 @@ INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
 -- Snacks and Books
 INSERT INTO EventFoodTypes (event_id, food_type_id) VALUES
     (5, 1); -- Snacks
-
 
 INSERT INTO Favorite (user_id, event_id) VALUES
     ('alvin_google_id', 2),
