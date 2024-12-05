@@ -18,6 +18,7 @@ def get_users():
         conn.close()
         user_list = [dict(row) for row in users]
         return jsonify(user_list), 200
+    
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
 

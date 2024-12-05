@@ -9,7 +9,7 @@ CREATE TABLE User(
     interests TEXT,
     --
     diet TEXT CHECK(diet IN ('Vegetarian', 'Vegan', 'Omnivore', 'Pescatarian', 'Other')) DEFAULT 'Omnivore',
-    preferred_language TEXT CHECK(preferred_language IN ('English', 'Mandarin', 'Arabic', 'Spanish')) DEFAULT 'English',
+    preferred_language TEXT DEFAULT 'English',
     --
    role TEXT CHECK(role IN ('Student', 'Faculty')) DEFAULT 'Student'
 
@@ -38,19 +38,6 @@ CREATE TABLE FoodTypes (
     food_type_id INTEGER PRIMARY KEY AUTOINCREMENT,
     food_type_name TEXT UNIQUE NOT NULL
 );
-
--- Languages
-CREATE TABLE Languages (
-    language_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    language_name TEXT UNIQUE NOT NULL
-);
-
-INSERT INTO Languages (language_name) VALUES
-('English'),
-('Spanish'),
-('Arabic'),
-('Mandarin'),
-('Other');
 
 INSERT INTO FoodTypes (food_type_name) VALUES 
 ('Snacks'), 
