@@ -27,6 +27,7 @@ def get_role():
     Endpoint to retrieve the role of a user based on their user_id stored in the session.
     """
     user_id = session.get('user_id')
+
     if not user_id:
         return jsonify({'message': 'Unauthorized. Please log in.'}), 401
     
@@ -44,7 +45,7 @@ def get_role():
                 return jsonify({'message': 'User not found'}), 404
             
             role = result[0]
-            return jsonify({'role': role}), 200
+            return jsonify({'user_id': user_id,'role': role}), 200
 
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
@@ -97,6 +98,8 @@ def create_profile():
 
     # Check if user is logged in
     user_id = session.get('user_id')
+
+    # debug statement [d]
     print('user_id is ', user_id)
 
     if not user_id:

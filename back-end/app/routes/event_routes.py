@@ -16,7 +16,7 @@ def create_event():
         "description": "Event Description",
         "date": "YYYY-MM-DD",
         "location": "Event Location",
-        "user_id": integer,
+        "user_id": string,
         "food_types": list of strings,
         "address": string,
         "start_time": string (HH:MM:SS),
