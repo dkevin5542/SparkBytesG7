@@ -24,6 +24,7 @@ def get_users():
 @user_bp.route('/api/user_role', methods=['GET'])
 def get_role():
     """
+    Endpoint to retrieve the role of a user based on their user_id stored in the session.
     """
     user_id = session.get('user_id')
     if not user_id:
@@ -37,12 +38,13 @@ def get_role():
                 SELECT role FROM User WHERE user_id = ?
                 """, (user_id,)
             )
-            user = cursor.fetchone()
-
-            if not user:
+            result = cursor.fetchone()
+            
+            if not result:
                 return jsonify({'message': 'User not found'}), 404
-        
-            return jsonify(user), 200
+            
+            role = result[0]
+            return jsonify({'role': role}), 200
 
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
