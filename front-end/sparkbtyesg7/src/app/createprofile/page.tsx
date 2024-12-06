@@ -20,10 +20,8 @@ const foodOptions = [
 const CreateProfile: React.FC = () => {
   const router = useRouter();
   const [profileData, setProfileData] = useState({
-    name: '',
     bio: '',
     interests: '',
-    buID: '',
     diet: [] as string[],
     language: '',
   });
@@ -40,8 +38,8 @@ const CreateProfile: React.FC = () => {
   const handleDietChange = (option: string) => {
     setProfileData((prevData) => {
       const updatedDiet = prevData.diet.includes(option)
-        ? prevData.diet.filter((item) => item !== option)  
-        : [...prevData.diet, option];  
+        ? prevData.diet.filter((item) => item !== option)
+        : [...prevData.diet, option];
       return { ...prevData, diet: updatedDiet };
     });
   };
@@ -50,7 +48,7 @@ const CreateProfile: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null); // Clear any previous error messages
     try {
-      const response = await fetch('http://localhost:5002/api/create_profile', {
+      const response = await fetch('http://localhost:5002/api/update_profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,19 +57,13 @@ const CreateProfile: React.FC = () => {
         body: JSON.stringify(profileData),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to create profile.');
       }
 
-      if (data.success) {
-        console.log('Profile created successfully');
-        router.push('/profile'); // Redirect to profile page
-      } else {
-        setErrorMessage(data.message || 'Failed to create profile.');
-      }
+      console.log('Profile created successfully');
+      router.push('/profile'); // Redirect to profile page
     } catch (error: any) {
       console.error('Error:', error);
       setErrorMessage(error.message || 'An unexpected error occurred.');
@@ -84,16 +76,6 @@ const CreateProfile: React.FC = () => {
         <h1>Create Your Profile</h1>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <form onSubmit={handleSubmit}>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={profileData.name}
-              onChange={handleChange}
-              required
-            />
-          </label>
           <label>
             Bio:
             <textarea
@@ -110,16 +92,6 @@ const CreateProfile: React.FC = () => {
               name="interests"
               value={profileData.interests}
               onChange={handleChange}
-            />
-          </label>
-          <label>
-            BU ID:
-            <input
-              type="text"
-              name="buID"
-              value={profileData.buID}
-              onChange={handleChange}
-              required
             />
           </label>
           <div className="food-type-container">
