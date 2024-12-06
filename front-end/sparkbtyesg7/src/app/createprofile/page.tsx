@@ -4,6 +4,19 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/createprofile.css';
 
+const foodOptions = [
+  "Vegetarian",
+  "Vegan",
+  "Gluten-Free",
+  "Dairy-Free",
+  "Nut-Free",
+  "Soy-Free",
+  "Halal",
+  "Kosher",
+  "Snacks",
+  "Other",
+];
+
 const CreateProfile: React.FC = () => {
   const router = useRouter();
   const [profileData, setProfileData] = useState({
@@ -11,7 +24,7 @@ const CreateProfile: React.FC = () => {
     bio: '',
     interests: '',
     buID: '',
-    diet: '',
+    diet: [] as string[],
     language: '',
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -21,6 +34,23 @@ const CreateProfile: React.FC = () => {
     setProfileData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleDietChange = (option: string) => {
+    setProfileData((prevData) => {
+      const updatedDiet = prevData.diet.includes(option)
+        ? prevData.diet.filter((item) => item !== option)  
+        : [...prevData.diet, option];  
+      return { ...prevData, diet: updatedDiet };
+    });
+  };
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setProfileData((prevData) => ({
+      ...prevData,
+      language: value,
     }));
   };
 
@@ -37,12 +67,11 @@ const CreateProfile: React.FC = () => {
         body: JSON.stringify(profileData),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create profile.');
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create profile.');
+      }
 
       if (data.success) {
         console.log('Profile created successfully');
@@ -109,15 +138,22 @@ const CreateProfile: React.FC = () => {
               onChange={handleChange}
             />
           </label>
-          <label>
-            Language:
-            <input
-              type="text"
-              name="language"
-              value={profileData.language}
-              onChange={handleChange}
-            />
-          </label>
+          <div className="food-type-container">
+            <label className="food-type-label">Dietary Preferences</label>
+            <div className="food-type-options">
+              {foodOptions.map((option) => (
+                <label key={option}>
+                  <input
+                    type="checkbox"
+                    value={option}
+                    checked={profileData.diet.includes(option)} // Dynamically checks if the option is selected
+                    onChange={() => handleDietChange(option)} // Toggles selection
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
           <button type="submit">Create Profile</button>
         </form>
       </div>

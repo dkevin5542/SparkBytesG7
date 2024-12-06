@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import '@/app/styles/page.css';
 import '@/app/styles/profile.css';
 import Navbar from '../components/navbar';
+import { useRouter } from 'next/navigation';
 
 /**
  * Profile Page Component
@@ -14,11 +15,12 @@ import Navbar from '../components/navbar';
  * - Relies on the Navbar for navigation between profile-specific actions.
  * - Fetches and displays user profile information dynamically.
  *
- * Usage:
+ * Usage:m
  * Serves as the landing page for user profile actions.
  */
 
 const ProfilePage: React.FC = () => {
+  const router = useRouter();
   const [profileData, setProfileData] = useState<any>(null); // State to hold profile data
   const [error, setError] = useState<string | null>(null);
 
@@ -80,6 +82,12 @@ const ProfilePage: React.FC = () => {
           <li><strong>Diet:</strong> {profileData.diet || 'N/A'}</li>
           <li><strong>Language:</strong> {profileData.language || 'N/A'}</li>
         </ul>
+        <button
+          className="edit-profile-button"
+          onClick={() => router.push('/edit_profile')}
+        >
+          Edit Profile
+        </button>
       </div>
     </div>
   );
