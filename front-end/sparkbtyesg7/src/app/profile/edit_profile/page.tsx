@@ -80,7 +80,7 @@ const EditProfile: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null); 
     try {
-      const response = await fetch('http://localhost:5002/api/edit_profile', {
+      const response = await fetch('http://localhost:5002/api/create_profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
