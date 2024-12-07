@@ -114,7 +114,7 @@ def create_profile():
     bio = data.get('bio')
     interests = data.get('interests')
     bu_id = data.get('buID')
-    diet = data.get('diet')
+    diet = data.get('diet', [])
     language = data.get('language')
 
     # Validate input data
@@ -130,7 +130,7 @@ def create_profile():
     if not isinstance(bu_id, str) or not bu_id.strip():
         return jsonify({'success': False, 'message': 'Invalid BU ID'}), 400
 
-    if diet is not None and not isinstance(diet, str):
+    if diet is not None and not isinstance(diet, list):
         return jsonify({'success': False, 'message': 'Invalid diet'}), 400
 
     if language is not None and not isinstance(language, str):
@@ -143,11 +143,21 @@ def create_profile():
             cursor.execute(
                 """
                 UPDATE User
-                SET name = ?, bio = ?, interests = ?, bu_id = ?, diet = ?, preferred_language = ?
+                SET name = ?, bio = ?, interests = ?, bu_id = ?, preferred_language = ?
                 WHERE user_id = ?
                 """,
-                (name, bio, interests, bu_id, diet, language, user_id)
+                (name, bio, interests, bu_id, language, user_id)
             )
+            user_id = cursor.lastrowid
+
+            for food_type in diet:
+                cursor.execute(
+                    """
+                    INSERT INTO UserFoodTypes (user_id, food_type_id)
+                    SELECT ?, food_type_id FROM FoodTypes WHERE food_type_name = ?
+                    """,
+                    (user_id, food_type)
+                )
             conn.commit()
 
         # Check if the update was successful
@@ -167,6 +177,7 @@ def get_profile():
     Requires the user to be logged in (session should have user_id).
     """
     user_id = session.get('user_id')
+
     if not user_id:
         return jsonify({'message': 'Unauthorized. Please log in.'}), 401
 
