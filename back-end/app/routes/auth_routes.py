@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.auth.token_utils import generate_token
+from app.auth import generate_token
 from database import get_db_connection
 import sqlite3
 

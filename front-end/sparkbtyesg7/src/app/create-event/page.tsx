@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import CreateEventForm from "../components/eventform";
 import '@/app/styles/formpage.css';
+import { error } from "console";
 
 /**
  * CreateEventPage Component
@@ -42,40 +43,28 @@ interface Event {
   start_time: string;
   end_time: string;
   quantity: number | "";
-  event_type?: string;
 }
 
 export default function CreateEventPage() {
   const [message, setMessage] = useState<string | null>(null);
-  const [eventType, setEventType] = useState<string>("");
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRole = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5002/api/user_role", {
-          method: "GET",
-          credentials: "include", 
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setEventType(data.role); // Set the role as event type
-        } else {
-          console.error("Failed to fetch user role");
-        }
-      } catch (error) {
-        console.error("Error fetching role:", error);
-      }
-    };
-
-    fetchRole();
+    const token = localStorage.getItem("jwtToken");
+    setToken(token);
   }, []);
 
   const handleCreateEvent = async (newEvent: Event) => {
+    if (!token) {
+      setMessage("You must be logged in to create an event.");
+      return;
+    }
+
     try {
       const response = await fetch("http://127.0.0.1:5002/api/events", {
         method: "POST",
         headers: {
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newEvent),
@@ -90,7 +79,9 @@ export default function CreateEventPage() {
         // Clear message after 3 seconds
         setTimeout(() => setMessage(null), 3000);
       } else {
-        console.error("Failed to create event");
+        const errorData = await response.json();
+        setMessage(errorData.message || "Failed to create event.");
+        console.error("Error creating event:", errorData);
       }
     } catch (error) {
       setMessage("An error occurred. Please try again later.");
@@ -103,8 +94,8 @@ export default function CreateEventPage() {
       <div className="content">
         <h1>Create an Event</h1>
         {message && <div className="feedback-message">{message}</div>}
-        {eventType ? (
-          <CreateEventForm onCreate={handleCreateEvent} eventType={eventType} />
+        {token ? (
+          <CreateEventForm onCreate={handleCreateEvent}/>
         ) : (
           <p>Loading user role...</p>
         )}

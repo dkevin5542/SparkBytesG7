@@ -19,7 +19,6 @@ interface Event {
 
 interface CreateEventFormProps {
   onCreate: (event: Event) => void;
-  eventType: string; // Added for auto-filling the event type
 }
 
 const foodOptions = [
@@ -35,7 +34,7 @@ const foodOptions = [
   "Other",
 ];
 
-export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate, eventType }) => {
+export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
@@ -65,7 +64,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate, even
       start_time: startTime,
       end_time: endTime,
       quantity: quantity === '' ? 0 : Number(quantity),
-      event_type: eventType, // Automatically filled
     };
 
     onCreate(eventData);
@@ -155,13 +153,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate, even
         onChange={(e) => setQuantity(Number(e.target.value))}
         placeholder="Quantity"
         required
-      />
-      <input
-        type="text"
-        value={eventType}
-        placeholder="Event Type"
-        readOnly
-        disabled
       />
       <button type="submit">Create Event</button>
     </form>

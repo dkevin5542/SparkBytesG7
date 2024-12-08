@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from database import get_db_connection
+from app.auth.token_utils import validate_token
 import sqlite3
 
 event_bp = Blueprint('event_bp', __name__)
@@ -8,7 +9,7 @@ event_bp = Blueprint('event_bp', __name__)
 @event_bp.route('/api/events', methods=['POST'])
 def create_event():
     """
-    create_event() creates a new event in the Event table. Now supports multiple food types for a single event.
+    create_event() creates a new event in the Event table.
 
     Expected JSON Payload:
     {
@@ -27,31 +28,45 @@ def create_event():
     Returns:
         Flask.Response: JSON response indicating success with the new event ID or an error message.
     """
+
+    # Extract token from Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
+
+    # Extract user ID from token
+    token = auth_header.split(" ")[1]
+    user_id = validate_token(token)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Invalid or expired JWT token.'}), 401
+
     data = request.get_json()
-        
-    # current fields
     title = data.get('title')
     description = data.get('description')
     event_date = data.get('date')
     location = data.get('location')
-    user_id = data.get('user_id', '1234567890')
-    food_types = data.get('food_types', [])
     address = data.get('address', 'N/A')
+    food_types = data.get('food_types', [])
+    quantity = data.get('quantity', 0)
     start_time = data.get('start_time', '00:00:00')
     end_time = data.get('end_time', '23:59:59')
-    quantity = data.get('quantity', 0)
-    event_type = data.get('event_type', 'Faculty')
 
-    # insert to database
+    # Validate required fields
+    if not title or not description or not event_date or not location or not address or not food_types or not quantity or not start_time or not end_time:
+        return jsonify({'success': False, 'message': 'Missing required fields.'}), 400
+
+    # Insert to database
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+
+            # Insert event into Event table
             cursor.execute(
                 """
-                INSERT INTO Event (user_id, title, description, location, address, event_date, start_time, end_time, quantity, event_type)
+                INSERT INTO Event (user_id, title, description, location, address, event_date, start_time, end_time, quantity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (user_id, title, description, location, address, event_date, start_time, end_time, quantity, event_type)
+                (user_id, title, description, location, address, event_date, start_time, end_time, quantity)
             )
             event_id = cursor.lastrowid
 
@@ -65,6 +80,7 @@ def create_event():
                 )
 
         return jsonify({'message': 'Event created successfully', 'event_id': event_id}), 201
+    
     except sqlite3.Error as e:
         return jsonify({'error': 'Failed to create event', 'details': str(e)}), 500
 
