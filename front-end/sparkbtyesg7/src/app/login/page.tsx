@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation'; // Use next/navigation for app router
 import '@/app/styles/login.css'; // Import global CSS
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter(); // Initialize the router
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,8 +28,8 @@ export default function Login() {
 
             const data = await response.json();
 
-            // Redirect to the dashboard or any other page upon successful login
-            redirect('/createprofile');
+            // Redirect to the create profile page upon successful login
+            router.push('/createprofile');
         } catch (err: any) {
             setError(err.message);
         }
@@ -73,4 +74,3 @@ export default function Login() {
         </div>
     );
 }
-
