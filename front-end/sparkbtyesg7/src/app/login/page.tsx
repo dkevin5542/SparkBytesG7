@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Use next/navigation for app router
 import '@/app/styles/login.css'; // Import global CSS
 
@@ -10,6 +10,39 @@ export default function Login() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter(); // Initialize the router
+
+    useEffect(() => {
+        // Check if the user's profile is complete
+        const checkProfileStatus = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            try {
+                const response = await fetch('http://localhost:5002/auth/profile_status', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    console.error('Error fetching profile status');
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.profile_complete) {
+                    // Redirect to the home page if the profile is complete
+                    router.push('/');
+                }
+            } catch (err) {
+                console.error('Error checking profile status:', err);
+            }
+        };
+
+        checkProfileStatus();
+    }, [router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,7 +88,7 @@ export default function Login() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            placeholder = "johndoe@bu.edu"
+                            placeholder="johndoe@bu.edu"
                             className="input"
                         />
                     </div>
@@ -83,4 +116,3 @@ export default function Login() {
         </div>
     );
 }
-
