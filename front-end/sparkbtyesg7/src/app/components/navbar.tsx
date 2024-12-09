@@ -10,20 +10,31 @@ import '@/app/styles/navbar.css';
  * Displays the navigation menu for the Spark Bytes application.
  * 
  * Purpose:
- * - Provides links for navigating between key pages.
- * - Uses Next.js's 'useRouter' for client-side navigation.
- *
+ * - Provides users with navigation between key pages of the application.
+ * - Supports client-side routing using Next.js's 'useRouter'.
+ * - Includes session management functionality, such as user logout.
+ * 
  * Usage:
- * Included at the top of the application to give users an easy way to navigate the site.
- *
+ * - Included at the top of the application as a persistent navigation bar.
+ * - Accessible on all pages to provide easy navigation and session actions.
+ * 
  * Features:
- * Each navigation link is represented as a button, and clicking on it will route the user to its page.
- *
+ * - Displays navigation links as buttons for HOME, ABOUT, CREATE EVENT, and CONTACT pages.
+ * - Includes a dropdown menu under 'PROFILE' with additional options:
+ *   - Edit Profile
+ *   - View Posted Events
+ *   - View Favorites
+ *   - Logout
+ * - Logout functionality interacts with the server to end the user's session and redirects to the login page.
+ * 
  * Styling:
- * CSS from 'navbar.css' for layout and design.
- *
+ * - Custom CSS imported from 'navbar.css' for layout, design, and dropdown menu styling.
+ * - Ensures a responsive design for various screen sizes.
+ * 
  * Functions:
- * 'handleNavigation': Redirects to the specified path using 'router.push'.
+ * - 'handleNavigation': Redirects users to the specified path using 'router.push'.
+ * - 'handleDropdownToggle': Toggles the visibility of the dropdown menu.
+ * - 'handleLogout': Sends a POST request to the backend to log out the user and redirects to the login page on success.
  */
 
 export const Navbar: React.FC = () => {

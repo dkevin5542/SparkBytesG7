@@ -1,5 +1,5 @@
 "use client";
-
+/* Importing React and global CSS styles. */
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EventList from "./components/eventlist";
@@ -13,7 +13,6 @@ import { isAuthenticated } from './login/login';
  *
  * Purpose:
  * - Displays a list of upcoming events fetched from the backend.
- * - Checks if the user is logged in, specifically for Google authentication.
  *
  * Features:
  * - Fetches event data from the backend API upon component mount.
@@ -104,4 +103,3 @@ export default function Home() {
     </div>
   );
 }
-

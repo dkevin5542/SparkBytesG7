@@ -1,7 +1,43 @@
 "use client";
 
+/* Importing React and global CSS styles. */
 import React, { useState, useEffect } from 'react';
 import '@/app/styles/eventform.css';
+
+/**
+ * CreateEventForm Component
+ *
+ * A form for creating new events in the Spark Bytes application.
+ * 
+ * Purpose:
+ * - Allows users to input details for a new event, such as title, description, date, location, food types, and more.
+ * - Handles form submission and passes the event data to the parent component via the 'onCreate' callback.
+ * 
+ * Usage:
+ * - Used on event creation page to enable users to create events.
+ * - The 'onCreate' prop accepts a function to handle the submission of event data.
+ * - The 'eventType' prop auto-fills the event type field.
+ *
+ * Props:
+ * - 'onCreate: A function called when the form is submitted, passing the event data as a parameter.
+ * - 'eventType': A string used to auto-fill the event type field, providing consistency for event categorization.
+ * 
+ * Features:
+ * - Form fields for capturing event details:
+ *   - 'title', 'description', 'date', 'location', 'address', 'start_time', 'end_time', 'quantity', and 'food_types'.
+ * - Dynamically handles food type selections using checkboxes.
+ * - Resets form fields after successful submission.
+ * 
+ * Styling:
+ * - Custom styles are imported from 'eventform.css'.
+ * - Includes a user-friendly layout with labels, placeholders, and interactive elements.
+ *
+ * Behavior:
+ * - Prevents default form submission using 'e.preventDefault()'.
+ * - Validates required fields to ensure all necessary data is provided.
+ * - Converts empty 'quantity' to 0 for consistent data handling.
+ */
+
 
 interface Event {
   title: string;
@@ -22,6 +58,7 @@ interface CreateEventFormProps {
   eventType: string; // Added for auto-filling the event type
 }
 
+// List of food options for checkboxes
 const foodOptions = [
   "Vegetarian",
   "Vegan",
@@ -46,15 +83,18 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate, even
   const [endTime, setEndTime] = useState('');
   const [quantity, setQuantity] = useState<number | ''>('');
 
+  // Handles selection of food type checkboxes
   const handleFoodTypeChange = (option: string) => {
     setFoodTypes((prev) =>
       prev.includes(option) ? prev.filter((type) => type !== option) : [...prev, option]
     );
   };
 
+  // Handles form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Construct event data object
     const eventData: Event = {
       title,
       description,
@@ -68,6 +108,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onCreate, even
       event_type: eventType, // Automatically filled
     };
 
+    // Pass event data to parent component
     onCreate(eventData);
 
     // Reset form fields

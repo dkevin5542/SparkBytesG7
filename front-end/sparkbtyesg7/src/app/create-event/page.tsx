@@ -1,4 +1,5 @@
 "use client"; // Using client-side features in Next.js
+/* Importing React and global CSS styles. */
 import React, { useState, useEffect } from "react";
 import CreateEventForm from "../components/eventform";
 import '@/app/styles/formpage.css';
@@ -9,27 +10,30 @@ import '@/app/styles/formpage.css';
  * Provides a page for users to create new events.
  * 
  * Purpose:
- * - Displays a form for creating events.
- * - Keeps track of the events users create.
- * - Shows a success message when an event is added.
- *
- * Features
- * - Uses 'CreateEventForm' to handle event input.
- * - Stores a list of events in the component's state.
+ * - Displays a form for creating events, using the 'CreateEventForm' component.
+ * - Dynamically retrieves the user's role to set the event type.
+ * - Shows feedback messages when events are successfully created or when errors occur.
+ * 
+ * Features:
+ * - Fetches the user's role from the backend and uses it to pre-fill the event type.
+ * - Handles event creation by sending a POST request to the backend.
+ * - Displays a temporary success message when an event is successfully added.
  * - Automatically clears feedback messages after 3 seconds.
- *
+ * 
  * State:
- * - 'events': Stores the list of created events.
- * - 'message': Displays a temporary success message after creating an event.
- *
+ * - 'message': A string or null value to store temporary feedback messages.
+ * - 'eventType': A string representing the user's role, used to pre-fill the event type.
+ * 
  * Functions:
- * 'handleCreateEvent': Adds a new event to the list and shows a success message.
- *
+ * - 'fetchRole': Fetches the user's role from the backend and sets the 'eventType' state.
+ * - 'handleCreateEvent': Sends event data to the backend, handles the response, and displays a feedback message.
+ * 
  * Usage:
- * Included in the application to provide an event creation page.
- *
+ * - Included in the application to provide a dedicated event creation page.
+ * - Automatically retrieves and sets up the user's role on page load.
+ * 
  * Styling:
- * Uses styles from 'formpage.css'.
+ * - Uses custom styles from 'formpage.css' for layout and design.
  */
 
 interface Event {
@@ -49,6 +53,7 @@ export default function CreateEventPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [eventType, setEventType] = useState<string>("");
 
+  // Retrieves the user's role when the component initializes
   useEffect(() => {
     const fetchRole = async () => {
       try {
@@ -71,6 +76,7 @@ export default function CreateEventPage() {
     fetchRole();
   }, []);
 
+  // Handles event creation by sending a POST request to the backend
   const handleCreateEvent = async (newEvent: Event) => {
     try {
       const response = await fetch("http://127.0.0.1:5002/api/events", {

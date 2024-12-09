@@ -1,6 +1,7 @@
 /* Importing React and global CSS styles. */
 import React from 'react';
 import '@/app/styles/about.css';
+
 /**
  * About Component
  *

@@ -1,8 +1,38 @@
 "use client";
 
+/* Importing React and global CSS styles. */
 import React, { useEffect, useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
+
+/**
+ * Authentication Components
+ *
+ * Provides authentication functionality using Google OAuth for the application.
+ * Includes components for handling Google login, checking authentication status, and ensuring profile existence.
+ * 
+ * Purpose:
+ * - Enables users to log in via Google OAuth.
+ * - Verifies if a user is authenticated and has an existing profile.
+ * - Redirects users to appropriate pages based on their authentication and profile status.
+ * 
+ * Components:
+ * - 'AuthProvider': Wraps the application with the Google OAuth provider.
+ * - 'isAuthenticated': Checks if the current user is authenticated via the backend.
+ * - 'checkProfile': Checks if the authenticated user has an existing profile in the system.
+ * - 'GoogleAuthButton': Displays a Google login button and handles login success or failure, including redirection.
+ * 
+ * Features:
+ * - Fetches authentication status and profile existence on component mount.
+ * - Handles Google login and sends the token to the backend for session creation.
+ * - Provides detailed error handling for authentication and login failures.
+ * - Redirects authenticated users to the profile page or profile creation page as needed.
+ * 
+ * Usage:
+ * - The 'AuthProvider' wraps the root component to enable Google OAuth functionality.
+ * - The 'GoogleAuthButton' is included where user login functionality is required.
+ * - 'isAuthenticated' and 'checkProfile' are helper functions for authentication logic.
+ */
 
 interface AuthProviderProps {
   children: React.ReactNode;

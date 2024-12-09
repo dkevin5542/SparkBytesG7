@@ -1,8 +1,45 @@
 'use client';
-
+/* Importing React and global CSS styles. */
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/createprofile.css';
+
+/**
+ * EditProfile Component
+ *
+ * Provides a form for users to view and edit their existing profile information.
+ * 
+ * Purpose:
+ * - Retrieves the user's existing profile data from the backend.
+ * - Allows users to update their profile fields such as name, bio, interests, dietary preferences, and language.
+ * - Submits updated profile data to the backend.
+ * 
+ * Features:
+ * - Fetches profile data on component mount and populates the form with existing values.
+ * - Allows users to update their profile fields dynamically.
+ * - Handles dietary preferences with checkboxes.
+ * - Validates and submits the updated data to the backend using a PUT request.
+ * - Displays loading indicators and error messages where appropriate.
+ * 
+ * State:
+ * - 'profileData': Stores the user's profile information, including editable fields.
+ * - 'errorMessage': Displays error messages.
+ * - 'loading': Indicates whether profile data is being fetched from the backend.
+ * 
+ * Functions:
+ * - 'fetchProfile': Retrieves the user's existing profile data and populates the form.
+ * - 'handleChange': Updates the respective field in 'profileData' when the user inputs data.
+ * - 'handleDietChange': Toggles dietary preferences in the 'diet' field.
+ * - 'handleSubmit': Submits the updated profile data to the backend.
+ * 
+ * Usage:
+ * - Used as a page for editing user profiles.
+ * - Requires integration with backend endpoints for profile retrieval and update.
+ * 
+ * Styling:
+ * - Uses custom styles from 'createprofile.css' for layout and design.
+ * - Includes a responsive card layout for the profile form.
+ */
 
 const foodOptions = [
   "Vegetarian",
