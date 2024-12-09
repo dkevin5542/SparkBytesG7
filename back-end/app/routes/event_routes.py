@@ -117,94 +117,104 @@ def get_events():
         per_page (int): The number of events per page (default 10).
         
         Sorting
-        sort_by
-        order
+        sort_by (str): The column to sort by (e.g., 'event_date', 'start_time').
+        order (str): The sort order ('asc' or 'desc', default 'asc').
 
         Filtering
-        keyword
-        dietary_needs
-        date
-        start_time
-        end_time
-
-    Returns:
-        Flask.Response: A JSON response containing the paginated list of events or an error message.
+        keyword (str): A keyword to search for in the title or description.
+        dietary_needs (list): List of dietary needs to filter by (e.g., ['Vegan', 'Gluten-Free']).
+        date (str): Filter by a specific date (format: YYYY-MM-DD).
+        start_time (str): Filter by events starting after this time (format: HH:MM:SS).
+        end_time (str): Filter by events ending before this time (format: HH:MM:SS).
     """
+    # Extract query parameters
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 10))
+    sort_by = request.args.get('sort_by', 'event_date')  # Default to sorting by date
+    order = request.args.get('order', 'asc').lower()
+    keyword = request.args.get('keyword', '').strip()
+    dietary_needs = request.args.getlist('dietary_needs')
+    date = request.args.get('date')
+    start_time = request.args.get('start_time')
+    end_time = request.args.get('end_time')
+
+    # Validate sorting order
+    if order not in ['asc', 'desc']:
+        order = 'asc'
+
+    # Base query
+    query = """
+        SELECT e.event_id, e.title, e.description, e.event_date, e.start_time, e.end_time,
+               e.location, e.address, GROUP_CONCAT(ft.food_type_name) AS dietary_needs
+        FROM Event e
+        LEFT JOIN EventFoodTypes eft ON e.event_id = eft.event_id
+        LEFT JOIN FoodTypes ft ON eft.food_type_id = ft.food_type_id
+        WHERE 1=1
+    """
+    params = []
+
+    # Add filtering conditions
+    if keyword:
+        query += " AND (e.title LIKE ? OR e.description LIKE ?)"
+        params.extend([f"%{keyword}%", f"%{keyword}%"])
+
+    if dietary_needs:
+        query += " AND e.event_id IN ("
+        query += """
+            SELECT DISTINCT eft.event_id
+            FROM EventFoodTypes eft
+            JOIN FoodTypes ft ON eft.food_type_id = ft.food_type_id
+            WHERE ft.food_type_name IN ({})
+        """.format(",".join("?" for _ in dietary_needs))
+        query += ")"
+        params.extend(dietary_needs)
+
+    if date:
+        query += " AND e.event_date = ?"
+        params.append(date)
+
+    if start_time:
+        query += " AND e.start_time >= ?"
+        params.append(start_time)
+        
+    if end_time:
+        query += " AND e.end_time <= ?"
+        params.append(end_time)
+
+    # Add sorting
+    query += f" GROUP BY e.event_id ORDER BY {sort_by} {order}"
+
+    # Add pagination
+    offset = (page - 1) * per_page
+    query += " LIMIT ? OFFSET ?"
+    params.extend([per_page, offset])
+
     try:
-        # pagination parameters 
-        page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 10, type=int)
-        offset = (page - 1) * per_page
-
-        # sorting parameters
-        sort_by = request.args.get('sort_by', 'date')  # Default sort by date
-        order = request.args.get('order', 'asc').lower() # Default ascending
-
-        # filtering parameters
-        keyword = request.args.get('keyword')
-        dietary_needs = request.args.get('dietary_needs')
-        date = request.args.get('date')
-        start_time = request.args.get('start_time')
-        end_time = request.args.get('end_time')
-
-        # Construct SQL query
-        query = """
-            SELECT e.event_id, e.title, e.description, e.event_date, e.location, e.event_type,
-                   GROUP_CONCAT(f.food_type_name, ', ') AS food_types
-            FROM Event e
-            LEFT JOIN EventFoodTypes ef ON e.event_id = ef.event_id
-            LEFT JOIN FoodTypes f ON ef.food_type_id = f.food_type_id
-            WHERE 1=1
-            """
-        params = []
-
-        # Add filters if provided
-
-        if keyword:
-            query += " AND (title LIKE ? OR description LIKE ?)"
-            params.extend([f"%{keyword}%", f"%{keyword}%"])
-        
-        if dietary_needs:
-            query += """
-                AND e.event_id IN (
-                    SELECT ef.event_id
-                    FROM EventFoodTypes ef
-                    JOIN FoodTypes f ON ef.food_type_id = f.food_type_id
-                    WHERE f.food_type_name = ?
-                )
-                """
-            params.append(dietary_needs)
-        
-        if date:
-            query += " AND event_date = ?"
-            params.append(date)
-        
-        if start_time:
-            query += " AND start_time >= ?"
-            params.append(start_time)
-        
-        if end_time:
-            query += " AND end_time <= ?"
-            params.append(end_time)
-
-        # Add sorting by date, location, title
-        if sort_by in ["event_date", "location", "title"]:
-            query += f" ORDER BY {sort_by} {'ASC' if order == 'asc' else 'DESC'}"
-
-        # Add pagination
-        query += " LIMIT ? OFFSET ?"
-        params.extend([per_page, offset])
-
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(query, params)
             events = cursor.fetchall()
 
-        event_list = [dict(row) for row in events]
-        
-        return jsonify({'page': page, 'per_page': per_page, 'total_events': len(event_list), 'events': event_list}), 200
+            # Format the results
+            formatted_events = [
+                {
+                    "event_id": row["event_id"],
+                    "title": row["title"],
+                    "description": row["description"],
+                    "event_date": row["event_date"],
+                    "start_time": row["start_time"],
+                    "end_time": row["end_time"],
+                    "location": row["location"],
+                    "address": row["address"],
+                    "dietary_needs": row["dietary_needs"].split(",") if row["dietary_needs"] else []
+                }
+                for row in events
+            ]
+
+        return jsonify({"success": True, "events": formatted_events}), 200
+
     except sqlite3.Error as e:
-        return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
+        return jsonify({"success": False, "message": "Failed to retrieve events.", "details": str(e)}), 500
 
 # RETRIEVE an event by ID
 @event_bp.route('/api/events/<int:event_id>', methods=['GET'])
