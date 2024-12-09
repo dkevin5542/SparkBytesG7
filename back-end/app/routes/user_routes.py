@@ -1,8 +1,47 @@
 from flask import Blueprint, request, jsonify, session
 from app.data.database import get_db_connection
+from app.auth import validate_token
 import sqlite3
 
 user_bp = Blueprint('user_bp', __name__)
+
+@user_bp.route('/auth/profile_status', methods=['GET'])
+def profile_status():
+    """
+    Check if the user's profile is complete.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    token = token.split(" ")[1]
+    user_id = validate_token(token)
+
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Invalid token'}), 401
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+
+            # Check User table fields
+            cursor.execute("SELECT interests, language FROM User WHERE user_id = ?", (user_id,))
+            user = cursor.fetchone()
+
+            if not user or not user['interests'] or not user['language']:
+                return jsonify({'profile_complete': False}), 200
+
+            # Check dietary preferences
+            cursor.execute("SELECT COUNT(*) AS diet_count FROM UserFoodTypes WHERE user_id = ?", (user_id,))
+            diet_count = cursor.fetchone()['diet_count']
+
+            if diet_count == 0:
+                return jsonify({'profile_complete': False}), 200
+
+            return jsonify({'profile_complete': True}), 200
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': 'An error occurred', 'details': str(e)}), 500
 
 @user_bp.route('/api/users', methods=['GET'])
 def get_users():
@@ -21,35 +60,6 @@ def get_users():
     
     except sqlite3.Error as e:
         return jsonify({'error':'Database error occurred', 'details': str(e)}), 500
-
-@user_bp.route('/api/user_role', methods=['GET'])
-def get_role():
-    """
-    Endpoint to retrieve the role of a user based on their user_id stored in the session.
-    """
-    user_id = session.get('user_id')
-    print(user_id)
-    if not user_id:
-        return jsonify({'message': 'Unauthorized. Please log in.'}), 401
-    
-    try:
-        with get_db_connection as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT role FROM User WHERE user_id = ?
-                """, (user_id,)
-            )
-            result = cursor.fetchone()
-            
-            if not result:
-                return jsonify({'message': 'User not found'}), 404
-            
-            role = result[0]
-            return jsonify({'user_id': user_id,'role': role}), 200
-
-    except Exception as e:
-        return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
 
 @user_bp.route('/api/update_preferences', methods=['PUT'])
 def update_preferences():

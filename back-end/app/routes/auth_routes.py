@@ -61,19 +61,10 @@ def login():
             cursor.execute("SELECT user_id, password_hash FROM User where email = ?", (email,))
             result = cursor.fetchone()
 
-            print(result)
-
             if result is None:
                  return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
             
             user_id, password_hash = result[0], result[1]
-
-            print("id:", user_id)
-            print("hash:", password_hash)
-
-            print("Checking password...")
-            is_valid = check_password_hash(password_hash, 'Mochi@120')
-            print(f"Password is valid: {is_valid}")
 
             if not check_password_hash(password_hash, password):
                 return jsonify({'success': False, 'message': 'Invalid email or password'}), 401

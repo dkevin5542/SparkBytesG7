@@ -66,16 +66,6 @@ CREATE TABLE UserFoodTypes (
     FOREIGN KEY (food_type_id) REFERENCES FoodTypes(food_type_id) ON DELETE CASCADE
 );
 
--- Assoc table preferred languages (lang) and user
-
-CREATE TABLE UserLanguages (
-    user_id INTEGER NOT NULL,
-    language_id INTEGER NOT NULL,
-    PRIMARY KEY (user_id, language_id),
-    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (language_id) REFERENCES Languages(language_id) ON DELETE CASCADE
-);
-
 -- Favorite event information
 CREATE TABLE Favorite (
     user_id INTEGER NOT NULL,
