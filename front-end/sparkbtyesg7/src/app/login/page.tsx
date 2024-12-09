@@ -95,25 +95,25 @@ export default function Login() {
         // Check if the user already has a profile
         const checkHasProfile = async () => {
             try {
-                const response = await fetch('http://localhost:5002/api/has_profile', {
+                const response = await fetch('http://localhost:5002/auth/profile_status', {
                     method: 'GET',
                     credentials: 'include', // Include cookies in the request
                 });
 
                 if (!response.ok) {
-                    console.error('Error fetching has_profile status:', response.status);
+                    console.error('Error fetching profile status:', response.status);
                     return;
                 }
 
                 const data = await response.json();
 
-                if (data.has_profile) {
+                if (data.profile_complete) {
                     router.push('/'); // Redirect to home if profile exists
                 } else {
                     router.push('/create-profile'); // Redirect to create profile if profile doesn't exist
                 }
             } catch (err) {
-                console.error('Error checking has_profile status:', err);
+                console.error('Error checking profile status:', err);
             }
         };
 
