@@ -8,7 +8,7 @@ CREATE TABLE User(
     name TEXT NOT NULL,
     bio TEXT,
     interests TEXT,
-    language TEXT DEFAULT 'English',
+    language TEXT DEFAULT 'English'
     -- diet (assoc table)
 ); 
 

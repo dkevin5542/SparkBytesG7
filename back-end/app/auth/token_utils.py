@@ -1,6 +1,14 @@
 import jwt
 import datetime
-from flask import current_app
+
+SECRET_KEY = None
+
+def configure_jwt(secret_key):
+    """
+    Configure the JWT utility with the application's secret key.
+    """
+    global SECRET_KEY
+    SECRET_KEY = secret_key
 
 def generate_token(user_id):
     """

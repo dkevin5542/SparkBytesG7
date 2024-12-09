@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
         "./back-end/app/auth"
-    ]
+    ],
+    "explorer.sortOrder": "default"
 }
