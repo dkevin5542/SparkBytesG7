@@ -145,7 +145,7 @@ def get_events():
     # Base query
     query = """
         SELECT e.event_id, e.title, e.description, e.event_date, e.start_time, e.end_time,
-               e.location, e.address, GROUP_CONCAT(ft.food_type_name) AS dietary_needs
+               e.location, e.address, e.quantity, GROUP_CONCAT(ft.food_type_name) AS dietary_needs
         FROM Event e
         LEFT JOIN EventFoodTypes eft ON e.event_id = eft.event_id
         LEFT JOIN FoodTypes ft ON eft.food_type_id = ft.food_type_id
@@ -176,7 +176,7 @@ def get_events():
     if start_time:
         query += " AND e.start_time >= ?"
         params.append(start_time)
-        
+
     if end_time:
         query += " AND e.end_time <= ?"
         params.append(end_time)
@@ -206,6 +206,7 @@ def get_events():
                     "end_time": row["end_time"],
                     "location": row["location"],
                     "address": row["address"],
+                    "quantity": row["quantity"],
                     "dietary_needs": row["dietary_needs"].split(",") if row["dietary_needs"] else []
                 }
                 for row in events

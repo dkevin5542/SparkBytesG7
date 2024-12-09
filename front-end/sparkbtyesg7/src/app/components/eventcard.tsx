@@ -6,14 +6,14 @@ interface Event {
   event_id: number;
   title: string;
   description: string;
-  date: string;
+  event_date: string;
   location: string;
+  dietary_needs: string[];
   food_type: string;
   address: string;
   start_time: string;
   end_time: string;
   quantity: number;
-  event_type: string;
 }
 
 interface EventCardProps {
@@ -35,16 +35,16 @@ export const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
       <h3 className="event-title">{event.title}</h3>
       <p className="event-description">{event.description}</p>
       <p className="event-date">
-        <strong>Date:</strong> {event.date}
-      </p>
-      <p className="event-id">
-        <strong>Event ID:</strong> {event.event_id}
+        <strong>Date:</strong> {event.event_date}
       </p>
       <p className="event-location">
         <strong>Location:</strong> {event.location}
       </p>
       <p className="event-food-type">
-        <strong>Food Type:</strong> {event.food_type}
+        <strong>Food Type:</strong>{" "}
+        {event.dietary_needs && event.dietary_needs.length > 0
+          ? event.dietary_needs.join(", ")
+          : "None"}
       </p>
       <p className="event-address">
         <strong>Address:</strong> {event.address}
@@ -57,9 +57,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
       </p>
       <p className="event-quantity">
         <strong>Quantity:</strong> {event.quantity}
-      </p>
-      <p className="event-type">
-        <strong>Event Type:</strong> {event.event_type}
       </p>
 
       {/* Favorite Button */}
