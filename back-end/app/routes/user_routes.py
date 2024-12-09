@@ -199,6 +199,8 @@ def get_profile():
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+
+            # Fetch basic user profile info
             cursor.execute(
                 """
                 SELECT name, bio, interests, bu_id, language
@@ -212,6 +214,18 @@ def get_profile():
             if not user:
                 return jsonify({'message': 'User not found'}), 404
 
+            # Fetch user dietary preferences
+            cursor.execute(
+                """
+                SELECT ft.food_type_name
+                FROM UserFoodTypes uft
+                JOIN FoodTypes ft ON uft.food_type_id = ft.food_type_id
+                WHERE uft.user_id = ?
+                """,
+                (user_id,)
+            )
+            food_preferences = [row[0] for row in cursor.fetchall()]
+
             # Map the data to a dictionary
             user_profile = {
                 'name': user[0],
@@ -219,11 +233,83 @@ def get_profile():
                 'interests': user[2],
                 'buID': user[3],
                 'language': user[4],
+                'dietary_preferences': food_preferences,
             }
             return jsonify(user_profile), 200
 
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'details': str(e)}), 500
+    
+@user_bp.route('/api/edit_profile', methods=['PUT'])
+def edit_profile():
+    """
+    Update the user's profile information, including dietary preferences.
+    """
+    # Extract token from cookie
+    token = request.cookies.get('token')
+
+    if not token:
+        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
+
+    # Validate the token and extract the user ID
+    user_id = validate_token(token)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Invalid or expired JWT token.'}), 401
+
+    # Get the updated profile data from the request body
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'Request body is missing or invalid.'}), 400
+
+    name = data.get('name')
+    bio = data.get('bio', '')
+    interests = data.get('interests', '')
+    language = data.get('language', 'English')
+    dietary_preferences = data.get('diet', [])  # List of dietary preferences
+
+    # Validate required fields
+    if not name:
+        return jsonify({'success': False, 'message': 'Name is required.'}), 400
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+
+            # Update the user's profile information
+            cursor.execute(
+                """
+                UPDATE User
+                SET name = ?, bio = ?, interests = ?, language = ?
+                WHERE user_id = ?
+                """,
+                (name, bio, interests, language, user_id)
+            )
+
+            # Clear existing dietary preferences for the user
+            cursor.execute(
+                """
+                DELETE FROM UserFoodTypes
+                WHERE user_id = ?
+                """,
+                (user_id,)
+            )
+
+            # Insert updated dietary preferences
+            for preference in dietary_preferences:
+                cursor.execute(
+                    """
+                    INSERT INTO UserFoodTypes (user_id, food_type_id)
+                    SELECT ?, food_type_id FROM FoodTypes WHERE food_type_name = ?
+                    """,
+                    (user_id, preference)
+                )
+
+            conn.commit()
+
+        return jsonify({'success': True, 'message': 'Profile updated successfully.'}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'success': False, 'message': 'Failed to update profile.', 'details': str(e)}), 500
     
 @user_bp.route('/api/has_profile', methods=['GET'])
 def has_profile():

@@ -45,9 +45,14 @@ const EditProfile: React.FC = () => {
           throw new Error(data.message || 'Failed to fetch profile data.');
         }
 
-        if (data.profile) {
-          setProfileData(data.profile);
-        }
+        setProfileData({
+          name: data.name || '',
+          bio: data.bio || '',
+          interests: data.interests || '',
+          buID: data.buID || '',
+          diet: data.dietary_preferences || [], // Assign fetched dietary preferences
+          language: data.language || '',
+        });
       } catch (error: any) {
         console.error('Error fetching profile:', error);
         setErrorMessage(error.message || 'An unexpected error occurred.');
@@ -80,7 +85,7 @@ const EditProfile: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null); 
     try {
-      const response = await fetch('http://localhost:5002/api/create_profile', {
+      const response = await fetch('http://localhost:5002/api/edit_profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -131,6 +136,7 @@ const EditProfile: React.FC = () => {
               name="name"
               value={profileData.name}
               onChange={handleChange}
+              placeholder={profileData.name || 'Enter your name'}
               required
             />
           </label>
@@ -140,6 +146,7 @@ const EditProfile: React.FC = () => {
               name="bio"
               value={profileData.bio}
               onChange={handleChange}
+              placeholder={profileData.bio || 'Enter your bio'}
               rows={4}
             />
           </label>
@@ -150,6 +157,7 @@ const EditProfile: React.FC = () => {
               name="interests"
               value={profileData.interests}
               onChange={handleChange}
+              placeholder={profileData.interests || 'e.g., Cooking, Hiking'}
             />
           </label>
           <label>
@@ -159,6 +167,7 @@ const EditProfile: React.FC = () => {
               name="buID"
               value={profileData.buID}
               onChange={handleChange}
+              placeholder={profileData.buID || 'BU ID'}
               required
               disabled  
             />
@@ -186,6 +195,7 @@ const EditProfile: React.FC = () => {
               name="language"
               value={profileData.language}
               onChange={handleChange}
+              placeholder={profileData.language || 'Preferred language (e.g., English)'}
             />
           </label>
           <button type="submit">Save Changes</button>
