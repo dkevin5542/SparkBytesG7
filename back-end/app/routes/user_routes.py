@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from ..database import get_db_connection
+from app.data.database import get_db_connection
 import sqlite3
 
 user_bp = Blueprint('user_bp', __name__)

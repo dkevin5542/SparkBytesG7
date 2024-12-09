@@ -9,15 +9,26 @@ export default function Register() {
     const [buid, setBuid] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const validateEmail = (email: string) => {
+        return /^[a-zA-Z0-9._%+-]+@bu\.edu$/.test(email);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!validateEmail(email)) {
+            setError('Email must end with @bu.edu');
+            setLoading(false);
+            return;
+        }
 
         try {
-            const response = await fetch('/api/register', {
+            const response = await fetch('http://localhost:5002/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,7 +37,8 @@ export default function Register() {
             });
 
             if (!response.ok) {
-                throw new Error('Registration failed');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Registration failed');
             }
 
             setSuccess(true);
@@ -35,6 +47,8 @@ export default function Register() {
         } catch (err: any) {
             setError(err.message);
             setSuccess(false);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -51,6 +65,7 @@ export default function Register() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
+                            placeholder = "John Doe"
                             className="input"
                         />
                     </div>
@@ -62,6 +77,7 @@ export default function Register() {
                             value={buid}
                             onChange={(e) => setBuid(e.target.value)}
                             required
+                            placeholder = "U12345678"
                             className="input"
                         />
                     </div>
@@ -73,6 +89,7 @@ export default function Register() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            placeholder="johndoe@bu.edu"
                             className="input"
                         />
                     </div>
@@ -84,13 +101,14 @@ export default function Register() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            placeholder="Enter a secure password"
                             className="input"
                         />
                     </div>
                     {error && <p className="error">{error}</p>}
                     {success && <p className="success">Registration successful!</p>}
-                    <button type="submit" className="button">
-                        Register
+                    <button type="submit" className="button" disabled={loading}>
+                        {loading ? 'Registering...' : 'Register'}
                     </button>
                 </form>
             </div>

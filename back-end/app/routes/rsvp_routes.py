@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..database import get_db_connection
+from app.data.database import get_db_connection
 import sqlite3
 
 rsvp_bp = Blueprint('rsvp_bp', __name__)

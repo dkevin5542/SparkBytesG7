@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.auth import generate_token
-from ..database import get_db_connection
+from app.data.database import get_db_connection
 import sqlite3
 
 auth_bp = Blueprint('auth_bp', __name__)
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/auth/register', methods=['POST'])
 def register():
     """
     Registers a user. Only @bu.edu email domains are allowed.
@@ -15,7 +15,7 @@ def register():
 
     email = data.get('email')
     password = data.get('password')
-    bu_id = data.get('bu_id')
+    bu_id = data.get('buid')
     name = data.get('name')
 
     if not data or not password or not email or not bu_id or not name:
@@ -41,7 +41,7 @@ def register():
 
     return jsonify({'success': True, 'message': 'User registered successfully'}), 201
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/auth/login', methods=['POST'])
 def login():
     """
     Handles login using email.

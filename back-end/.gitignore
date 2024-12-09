@@ -5,5 +5,5 @@
 .pyc
 __pycache__/
 
-# flask_session
-flask_session/
+# sqlite3 database
+data/database.db
