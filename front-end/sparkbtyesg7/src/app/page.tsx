@@ -18,71 +18,70 @@ import '@/app/styles/page.css';
 
 export default function Home() {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingAuth, setLoadingAuth] = useState(true);
+  const [loadingEvents, setLoadingEvents] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Function to check if the user is authenticated
-  const isAuthenticated = async (): Promise<boolean> => {
+  // Check if user is authenticated and redirect if not
+
+  const checkAuth = async () => {
     try {
-      const response = await fetch('http://localhost:5002/auth/isAuthenticated', {
+      const authenticated = await fetch('http://localhost:5002/auth/verify', {
         method: 'GET',
-        credentials: 'include', // Include cookies in the request
+        credentials: 'include',
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        return data.authenticated; // Assume the API returns a boolean `authenticated` field
-      } else {
-        console.error('Authentication check failed:', response.status);
-        return false;
+      if (!authenticated.ok) {
+        console.error('User not authenticated, redirecting to login');
+        router.push('/login'); // Redirect to login if not authenticated
       }
     } catch (err) {
-      console.error('Error checking authentication:', err);
-      return false;
+      console.error("Error during authentication check:", err);
+      setError("Failed to verify authentication");
+    } finally {
+      setLoadingAuth(false);
     }
   };
 
-  // Check if user is authenticated and redirect if not
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authenticated = await isAuthenticated();
-      if (!authenticated) {
-        router.push('/login'); // Redirect to login if not authenticated
-      }
-    };
+  const fetchEvents = async () => {
+    setLoadingEvents(true);
+    try {
+      const response = await fetch("http://localhost:5002/api/getevents", {
+        method: "GET",
+        credentials: "include", // Include cookies
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to fetch events");
+      }
+
+      const data = await response.json();
+      setEvents(data.events);
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setError("Failed to fetch events");
+    } finally {
+      setLoadingEvents(false);
+    }
+  };
+
+  // Run authentication check on component mount
+  useEffect(() => {
     checkAuth();
   }, [router]);
 
-  // Fetch events from the backend
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch('http://localhost:5002/api/getevents', {
-        credentials: 'include', // Include cookies in the request
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data.events);
-      } else {
-        console.error('Failed to fetch events');
-        setError('Failed to fetch events');
-      }
-    } catch (err) {
-      console.error('Error fetching events:', err);
-      setError('Error fetching events');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch events on component mount
   useEffect(() => {
-    fetchEvents();
-  }, []);
+    if (!loadingAuth && !error) {
+      fetchEvents();
+    }
+  }, [loadingAuth, error]);
 
-  if (loading) {
+  if (loadingAuth) {
+    return <div className="home-page"><p>Verifying authentication...</p></div>;
+  }
+
+  if (loadingEvents) {
     return <div className="home-page"><p>Loading events...</p></div>;
   }
 

@@ -47,7 +47,6 @@ def login():
     Handles login using email.
     """
     data = request.get_json()
-    print(data)
 
     if not data or 'email' not in data or 'password' not in data:
         return jsonify({'success': False, 'message': 'Missing required fields.'}), 400
@@ -81,6 +80,8 @@ def login():
                 samesite='Lax',         # Helps mitigate CSRF
                 max_age=3600            # Set token expiration (1 hour in this example)
             )
+            
+            print(response)
 
             return response
         
@@ -106,13 +107,21 @@ def verify():
     Checks if the user is authenticated based on the JWT in the cookie.
     """
     token = request.cookies.get('token')
+    
     if not token:
+        print("No token found in cookies.")
         return jsonify({'authenticated': False}), 401
+
+    print(f"Token retrieved from cookies: {token}")
 
     try:
         user_id = validate_token(token)
-        if not user_id:
-            return jsonify({'authenticated': False}), 401
-        return jsonify({'authenticated': True}), 200
+        if user_id:
+            print(f"User authenticated with user_id: {user_id}")
+            return jsonify({'authenticated': True, 'user_id': user_id}), 200
+        else:
+            print("Token validation failed.")
+            return jsonify({'authenticated': False, 'message': 'Invalid token'}), 401
     except Exception as e:
-        return jsonify({'authenticated': False, 'error': str(e)}), 401
+        print(f"Error during token validation: {e}")
+        return jsonify({'authenticated': False, 'message': str(e)}), 401
