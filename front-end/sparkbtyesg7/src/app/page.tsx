@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EventList from "./components/eventlist";
 import '@/app/styles/page.css';
-import { isAuthenticated } from './login/login';
 
 /**
  * Home Component
@@ -13,71 +12,75 @@ import { isAuthenticated } from './login/login';
  *
  * Purpose:
  * - Displays a list of upcoming events fetched from the backend.
- * - Checks if the user is logged in, specifically for Google authentication.
- *
- * Features:
- * - Fetches event data from the backend API upon component mount.
- * - Handles loading and error states during data fetching.
  * - Redirects to login page if the user is not authenticated.
  * - Displays a fallback message if no events are available.
- *
- * State:
- * - 'events': An array of event objects, each containing 'title', 'description', 'date', and 'location'.
- * - 'loading': A boolean indicating whether the data is still being fetched.
- * - 'error': A string that stores an error message if data fetching fails.
- * - 'isGoogleAuthenticated': A boolean indicating whether the user is authenticated with Google.
- *
- * Styling:
- * - Uses 'page.css' for layout and design.
  */
 
 export default function Home() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Allow error to be a string or null
-  const [isGoogleAuthenticated, setIsGoogleAuthenticated] = useState(false); // Track Google authentication
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Check if user is authenticated, if not redirect to login page
+  // Function to check if the user is authenticated
+  const isAuthenticated = async (): Promise<boolean> => {
+    try {
+      const response = await fetch('http://localhost:5002/auth/isAuthenticated', {
+        method: 'GET',
+        credentials: 'include', // Include cookies in the request
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.authenticated; // Assume the API returns a boolean `authenticated` field
+      } else {
+        console.error('Authentication check failed:', response.status);
+        return false;
+      }
+    } catch (err) {
+      console.error('Error checking authentication:', err);
+      return false;
+    }
+  };
+
+  // Check if user is authenticated and redirect if not
   useEffect(() => {
     const checkAuth = async () => {
       const authenticated = await isAuthenticated();
       if (!authenticated) {
-        router.push('/login');
-      } else {
-        // Assume Google authentication is part of the `isAuthenticated` logic
-        setIsGoogleAuthenticated(true);
+        router.push('/login'); // Redirect to login if not authenticated
       }
     };
+
     checkAuth();
   }, [router]);
 
   // Fetch events from the backend
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/getevents');
+      const response = await fetch('http://localhost:5002/api/getevents', {
+        credentials: 'include', // Include cookies in the request
+      });
+
       if (response.ok) {
         const data = await response.json();
-        console.log('Events fetched:', data);
-        setEvents(data.events); 
+        setEvents(data.events);
       } else {
         console.error('Failed to fetch events');
-        setError('Failed to fetch events'); 
+        setError('Failed to fetch events');
       }
     } catch (err) {
       console.error('Error fetching events:', err);
-      setError('Error fetching events'); 
+      setError('Error fetching events');
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   // Fetch events on component mount
   useEffect(() => {
-    if (isGoogleAuthenticated) {
-      fetchEvents();
-    }
-  }, [isGoogleAuthenticated]);
+    fetchEvents();
+  }, []);
 
   if (loading) {
     return <div className="home-page"><p>Loading events...</p></div>;
@@ -85,10 +88,6 @@ export default function Home() {
 
   if (error) {
     return <div className="home-page"><p>{error}</p></div>;
-  }
-
-  if (!isGoogleAuthenticated) {
-    return <div className="home-page"><p>Checking authentication...</p></div>;
   }
 
   return (
