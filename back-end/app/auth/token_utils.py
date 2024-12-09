@@ -46,7 +46,7 @@ def validate_token(token):
             print("Token has expired.")
             return None
 
-        return payload["user_id"]
+        return payload.get("user_id")
     except jwt.ExpiredSignatureError:
         print("Token has expired (ExpiredSignatureError).")
         return None

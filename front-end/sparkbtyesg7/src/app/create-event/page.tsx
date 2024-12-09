@@ -47,27 +47,43 @@ interface Event {
 
 export default function CreateEventPage() {
   const [message, setMessage] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    setToken(token);
-  }, []);
 
   const handleCreateEvent = async (newEvent: Event) => {
-    if (!token) {
-      setMessage("You must be logged in to create an event.");
+
+    const formattedEvent = {
+      ...newEvent,
+      start_time: newEvent.start_time + ':00',
+      end_time: newEvent.end_time + ':00',
+    };
+
+    // Ensure the input date is valid (after current date)
+    const currentDate = new Date(); // Current date and time
+    const eventDate = new Date(newEvent.date); // Event date
+
+    if (eventDate <= currentDate) {
+      setMessage('The event date must be in the future.');
+      setTimeout(() => setMessage(null), 3000); // Clear message after 3 seconds
+      return;
+    }
+
+    // Ensure the start time is before the end time
+    const startTime = new Date(`1970-01-01T${formattedEvent.start_time}`);
+    const endTime = new Date(`1970-01-01T${formattedEvent.end_time}`);
+
+    if (endTime <= startTime) {
+      setMessage("The end time must be after the start time.");
+      setTimeout(() => setMessage(null), 3000);
       return;
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5002/api/events", {
-        method: "POST",
+      const response = await fetch('http://localhost:5002/api/events', {
+        method: 'POST',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newEvent),
+        body: JSON.stringify(formattedEvent),
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -94,11 +110,7 @@ export default function CreateEventPage() {
       <div className="content">
         <h1>Create an Event</h1>
         {message && <div className="feedback-message">{message}</div>}
-        {token ? (
-          <CreateEventForm onCreate={handleCreateEvent}/>
-        ) : (
-          <p>Loading user role...</p>
-        )}
+          <CreateEventForm onCreate={handleCreateEvent} />
       </div>
     </div>
   );

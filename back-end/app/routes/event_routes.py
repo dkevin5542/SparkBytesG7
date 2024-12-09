@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.data.database import get_db_connection
 from app.auth.token_utils import validate_token
+from datetime import datetime
 import sqlite3
 
 event_bp = Blueprint('event_bp', __name__)
@@ -28,18 +29,19 @@ def create_event():
     Returns:
         Flask.Response: JSON response indicating success with the new event ID or an error message.
     """
+    # Extract token from cookie
+    token = request.cookies.get('token')
 
-    # Extract token from Authorization header
-    auth_header = request.headers.get('Authorization')
-    if not auth_header or not auth_header.startswith("Bearer "):
+    if not token:
         return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
 
-    # Extract user ID from token
-    token = auth_header.split(" ")[1]
+    # Validate the token and extract the user ID
     user_id = validate_token(token)
+
     if not user_id:
         return jsonify({'success': False, 'message': 'Invalid or expired JWT token.'}), 401
 
+    # Get JSON payload
     data = request.get_json()
     title = data.get('title')
     description = data.get('description')
@@ -48,12 +50,31 @@ def create_event():
     address = data.get('address', 'N/A')
     food_types = data.get('food_types', [])
     quantity = data.get('quantity', 0)
-    start_time = data.get('start_time', '00:00:00')
-    end_time = data.get('end_time', '23:59:59')
+    start_time = data.get('start_time', '12:00:00 PM')
+    end_time = data.get('end_time', '11:59:59 PM')
 
     # Validate required fields
     if not title or not description or not event_date or not location or not address or not food_types or not quantity or not start_time or not end_time:
         return jsonify({'success': False, 'message': 'Missing required fields.'}), 400
+
+
+    try:
+        # Validate that event date is in the future
+        event_date_obj = datetime.strptime(event_date, "%Y-%m-%d")  # Parse the date
+        current_date = datetime.now()
+
+        if event_date_obj <= current_date:
+            return jsonify({'success': False, 'message': 'The event date must be in the future.'}), 400
+        
+        # Validate that start time is before the end time
+        start_time_obj = datetime.strptime(start_time, "%H:%M:%S")
+        end_time_obj = datetime.strptime(end_time, "%H:%M:%S")
+
+        if end_time_obj <= start_time_obj:
+            return jsonify({'success': False, 'message': 'The end time must be after the start time.'}), 400
+        
+    except ValueError as e:
+        return jsonify({'success': False, 'message': f'Invalid date or time format: {e}'}), 400
 
     # Insert to database
     try:
@@ -64,7 +85,7 @@ def create_event():
             cursor.execute(
                 """
                 INSERT INTO Event (user_id, title, description, location, address, event_date, start_time, end_time, quantity)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (user_id, title, description, location, address, event_date, start_time, end_time, quantity)
             )

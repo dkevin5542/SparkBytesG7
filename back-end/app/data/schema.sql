@@ -24,8 +24,6 @@ CREATE TABLE Event (
     event_date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 

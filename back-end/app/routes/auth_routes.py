@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.auth import generate_token, validate_token
 from app.data.database import get_db_connection
 import sqlite3
+import jwt
 
 auth_bp = Blueprint('auth_bp', __name__)
 
@@ -75,10 +76,10 @@ def login():
             response.set_cookie(
                 'token',
                 token,
-                httponly=True,          # Prevent JavaScript access
-                secure=False,            # Use HTTPS in production
-                samesite='Lax',         # Helps mitigate CSRF
-                max_age=3600            # Set token expiration (1 hour in this example)
+                httponly=True,          
+                secure=False,        
+                samesite='Lax',         
+                domain=None
             )
             
             print(response)
@@ -104,24 +105,24 @@ def logout():
 @auth_bp.route('/auth/verify', methods=['GET'])
 def verify():
     """
-    Checks if the user is authenticated based on the JWT in the cookie.
+    Verifies the user's authentication by validating the token in the HttpOnly cookie.
     """
-    token = request.cookies.get('token')
-    
-    if not token:
-        print("No token found in cookies.")
-        return jsonify({'authenticated': False}), 401
 
-    print(f"Token retrieved from cookies: {token}")
+    token = request.cookies.get('token')  # Retrieve the token from the HttpOnly cookie
+    if not token:
+        return jsonify({'authenticated': False, 'message': 'Token missing'}), 401
 
     try:
-        user_id = validate_token(token)
-        if user_id:
-            print(f"User authenticated with user_id: {user_id}")
-            return jsonify({'authenticated': True, 'user_id': user_id}), 200
-        else:
-            print("Token validation failed.")
-            return jsonify({'authenticated': False, 'message': 'Invalid token'}), 401
-    except Exception as e:
-        print(f"Error during token validation: {e}")
-        return jsonify({'authenticated': False, 'message': str(e)}), 401
+        payload = validate_token(token)
+       
+        if not payload:
+            return jsonify({'authenticated': False, 'message':'Invalid or expired token'}), 401
+        
+        user_id = payload['user_id']
+        print("verify's good")
+        return jsonify({'authenticated': True, 'user_id': user_id}), 200
+    
+    except jwt.ExpiredSignatureError:
+        return jsonify({'authenticated': False, 'message': 'Token expired'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'authenticated': False, 'message': 'Invalid token'}), 401
