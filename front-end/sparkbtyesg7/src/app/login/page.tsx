@@ -12,97 +12,20 @@ export default function Login() {
     const router = useRouter(); // Initialize the router
 
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-
-    //     try {
-    //         // Step 1: Authenticate the user
-    //         const response = await fetch('http://localhost:5002/auth/login', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ email, password }),
-    //             credentials: 'include', // Include cookies for authentication
-    //         });
-
-    //         if (!response.ok) {
-    //             const errorData = await response.json();
-    //             throw new Error(errorData.message || 'Invalid credentials');
-    //         }
-
-    //         // Step 2: Check if the user has a profile
-    //         const profileResponse = await fetch('http://localhost:5002/api/has_profile', {
-    //             method: 'GET',
-    //             credentials: 'include', // Include cookies in the request
-    //         });
-
-    //         if (!profileResponse.ok) {
-    //             console.error('Error fetching has_profile status:', profileResponse.status);
-    //             throw new Error('Failed to check profile status');
-    //         }
-
-    //         const profileData = await profileResponse.json();
-
-    //         // Step 3: Redirect based on the profile existence
-    //         if (profileData.has_profile) {
-    //             router.push('/'); // Redirect to home if profile exists
-    //         } else {
-    //             router.push('/create-profile'); // Redirect to create-profile if profile does not exist
-    //         }
-    //     } catch (err: any) {
-    //         setError(err.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-
-
-    useEffect(() => {
-
-        // Check if the user already has a profile
-        const checkHasProfile = async () => {
-            try {
-                const response = await fetch('http://localhost:5002/auth/profile_status', {
-                    method: 'GET',
-                    credentials: 'include', // Include cookies in the request
-                });
-
-                if (!response.ok) {
-                    console.error('Error fetching profile status:', response.status);
-                    return;
-                }
-
-                const data = await response.json();
-
-                if (data.profile_complete) {
-                    router.push('/'); // Redirect to home if profile exists
-                } else {
-                    router.push('/create-profile'); // Redirect to create profile if profile doesn't exist
-                }
-            } catch (err) {
-                console.error('Error checking profile status:', err);
-            }
-        };
-
-        // checkProfileStatus();
-        checkHasProfile();
-    }, [router]);
-
+    //new logic, haven't tested
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
+            // Step 1: Authenticate the user
             const response = await fetch('http://localhost:5002/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
-                credentials: 'include',
+                credentials: 'include', // Include cookies for authentication
             });
 
             if (!response.ok) {
@@ -110,16 +33,95 @@ export default function Login() {
                 throw new Error(errorData.message || 'Invalid credentials');
             }
 
-            const data = await response.json();
+            // Step 2: Check if the user has a profile
+            const profileResponse = await fetch('http://localhost:5002/api/has_profile', {
+                method: 'GET',
+                credentials: 'include', // Include cookies in the request
+            });
 
-            // Redirect to the appropriate page upon login (home)
-            router.push('/');
+            if (!profileResponse.ok) {
+                console.error('Error fetching has_profile status:', profileResponse.status);
+                throw new Error('Failed to check profile status');
+            }
+
+            const profileData = await profileResponse.json();
+
+            // Step 3: Redirect based on the profile existence
+            if (profileData.has_profile) {
+                router.push('/'); // Redirect to home if profile exists
+            } else {
+                router.push('/create-profile'); // Redirect to create-profile if profile does not exist
+            }
         } catch (err: any) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
+
+
+
+    //old one, doesn't work yet
+    // useEffect(() => {
+
+    //     // Check if the user already has a profile
+    //     const checkHasProfile = async () => {
+    //         try {
+    //             const response = await fetch('http://localhost:5002/auth/profile_status', {
+    //                 method: 'GET',
+    //                 credentials: 'include', // Include cookies in the request
+    //             });
+
+    //             if (!response.ok) {
+    //                 console.error('Error fetching profile status:', response.status);
+    //                 return;
+    //             }
+
+    //             const data = await response.json();
+
+    //             if (data.profile_complete) {
+    //                 router.push('/'); // Redirect to home if profile exists
+    //             } else {
+    //                 router.push('/create-profile'); // Redirect to create profile if profile doesn't exist
+    //             }
+    //         } catch (err) {
+    //             console.error('Error checking profile status:', err);
+    //         }
+    //     };
+
+    //     // checkProfileStatus();
+    //     checkHasProfile();
+    // }, [router]);
+
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+
+    //     try {
+    //         const response = await fetch('http://localhost:5002/auth/login', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ email, password }),
+    //             credentials: 'include',
+    //         });
+
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             throw new Error(errorData.message || 'Invalid credentials');
+    //         }
+
+    //         const data = await response.json();
+
+    //         // Redirect to the appropriate page upon login (home)
+    //         router.push('/');
+    //     } catch (err: any) {
+    //         setError(err.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     return (
         <div className="wrapper">
