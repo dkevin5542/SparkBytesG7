@@ -61,36 +61,6 @@ export default function Login() {
 
 
     useEffect(() => {
-        // Check if the user's profile is complete
-        // const checkProfileStatus = async () => {
-        //     const token = localStorage.getItem('token');
-        //     if (!token) return;
-
-        //     try {
-        //         const response = await fetch('http://localhost:5002/auth/profile_status', {
-        //             method: 'GET',
-        //             headers: {
-        //                 'Authorization': `Bearer ${token}`,
-        //             },
-        //         });
-            
-        //         if (!response.ok) {
-        //             const errorText = await response.text();
-        //             console.error('Error fetching profile status:', response.status, errorText);
-        //             return;
-        //         }
-            
-        //         const data = await response.json();
-            
-        //         if (data.profile_complete) {
-        //             router.push('/');
-        //         } else {
-        //             router.push('/create-profile');
-        //         }
-        //     } catch (err) {
-        //         console.error('Error checking profile status:', err);
-        //     }
-        // };
 
         // Check if the user already has a profile
         const checkHasProfile = async () => {
