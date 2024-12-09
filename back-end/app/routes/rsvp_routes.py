@@ -9,16 +9,6 @@ rsvp_bp = Blueprint('rsvp_bp', __name__)
 def rsvp_event():
     """
     Submits an RSVP for a user to an event.
-
-    Expected JSON Payload:
-    {
-        "user_id": Integer,
-        "event_id": Integer,
-        "rsvp_status": Optional string ("Going", "Interested", "Not Going")
-    }
-
-    Returns:
-        Flask.Response: JSON response indicating successful RSVP or an error message.
     """
     data = request.get_json()
     user_id = data.get('user_id')

@@ -314,9 +314,6 @@ def update_event(event_id):
 def del_event(event_id):
     """
     del_event(event_id) will delete the specified event.
-
-    Returns:
-        Flask.Response: A JSON response containing a successful deletion message or an error.
     """
     try:
         with get_db_connection() as conn:

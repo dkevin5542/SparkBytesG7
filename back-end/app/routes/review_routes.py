@@ -8,17 +8,6 @@ review_bp = Blueprint('review_bp', __name__)
 def give_feedback():
     """
     Submits a review for an event.
-
-    Expected JSON Payload:
-    {
-        "user_id": Integer,
-        "event_id": Integer,
-        "rating": Integer (1-5),
-        "comment": Optional string
-    }
-
-    Returns:
-        Flask.Response: JSON response indicating successful review or an error message.
     """
     data = request.get_json()
     user_id = data.get('user_id')
