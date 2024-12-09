@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.auth import generate_token
+from app.auth import generate_token, validate_token
 from app.data.database import get_db_connection
 import sqlite3
 
@@ -99,3 +99,20 @@ def logout():
     response = make_response(jsonify({'success': True, 'message': 'Logged out success'}))
     response.delete_cookie('token')
     return response
+
+@auth_bp.route('/auth/verify', methods=['GET'])
+def verify():
+    """
+    Checks if the user is authenticated based on the JWT in the cookie.
+    """
+    token = request.cookies.get('token')
+    if not token:
+        return jsonify({'authenticated': False}), 401
+
+    try:
+        user_id = validate_token(token)
+        if not user_id:
+            return jsonify({'authenticated': False}), 401
+        return jsonify({'authenticated': True}), 200
+    except Exception as e:
+        return jsonify({'authenticated': False, 'error': str(e)}), 401
