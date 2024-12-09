@@ -47,6 +47,7 @@ def login():
     Handles login using email.
     """
     data = request.get_json()
+    print(data)
 
     if not data or 'email' not in data or 'password' not in data:
         return jsonify({'success': False, 'message': 'Missing required fields.'}), 400
@@ -60,20 +61,31 @@ def login():
             cursor.execute("SELECT user_id, password_hash FROM User where email = ?", (email,))
             result = cursor.fetchone()
 
+            print(result)
+
             if result is None:
                  return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
             
-            user_id, password_hash = result
+            user_id, password_hash = result[0], result[1]
+
+            print("id:", user_id)
+            print("hash:", password_hash)
+
+            print("Checking password...")
+            is_valid = check_password_hash(password_hash, 'Mochi@120')
+            print(f"Password is valid: {is_valid}")
 
             if not check_password_hash(password_hash, password):
                 return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
 
             # If login is successful, create and return a JWT.
-            token = generate_token(user_id=user_id)
+            token = generate_token(user_id)
 
             return jsonify({'success': True, 'message': 'Login successful', 'token': token}), 200
         
     except sqlite3.Error as e:
+        print("Database error:", str(e))
         return jsonify({'success': False, 'message': 'Failed to login', 'details': str(e)}), 500
     except Exception as e:
+        print("Unexpected error:", str(e))
         return jsonify({'success': False, 'message': 'An unexpected error occurred', 'details': str(e)}), 500

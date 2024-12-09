@@ -1,5 +1,5 @@
 import jwt
-import datetime
+from datetime import datetime, timedelta, timezone
 
 SECRET_KEY = None
 
@@ -19,7 +19,7 @@ def generate_token(user_id):
     
     payload = {
         'user_id': user_id,
-        'exp': datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=5)  # Expiration in EST
+        'exp': datetime.now(timezone.utc) + timedelta(hours=-5) + timedelta(hours=1)  # Token is valid for one hour, expiration in EST
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token

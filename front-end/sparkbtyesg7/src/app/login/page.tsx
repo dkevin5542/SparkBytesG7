@@ -7,13 +7,15 @@ import '@/app/styles/login.css'; // Import global CSS
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('http://localhost:5002/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,15 +24,20 @@ export default function Login() {
             });
 
             if (!response.ok) {
-                throw new Error('Invalid credentials');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Invalid credentials');
             }
 
             const data = await response.json();
+
+            localStorage.setItem('token', data.token);
 
             // Redirect to the dashboard or any other page upon successful login
             redirect('/createprofile');
         } catch (err: any) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -47,6 +54,7 @@ export default function Login() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            placeholder = "johndoe@bu.edu"
                             className="input"
                         />
                     </div>
@@ -58,12 +66,13 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            placeholder="Enter your password"
                             className="input"
                         />
                     </div>
                     {error && <p className="error">{error}</p>}
-                    <button type="submit" className="button">
-                        Login
+                    <button type="submit" className="button" disabled={loading}>
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
                 <p className="register-link">
