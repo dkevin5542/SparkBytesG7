@@ -310,29 +310,5 @@ def edit_profile():
 
     except sqlite3.Error as e:
         return jsonify({'success': False, 'message': 'Failed to update profile.', 'details': str(e)}), 500
-    
-@user_bp.route('/api/has_profile', methods=['GET'])
-def has_profile():
-    """
-    Check if the logged-in user already has a profile.
-    """
-    # Extract token from cookie
-    token = request.cookies.get('token')
 
-    if not token:
-        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
-
-    # Validate the token and extract the user ID
-    user_id = validate_token(token)
-
-    try:
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM UserProfile WHERE user_id = ?", (user_id,))
-            result = cursor.fetchone()
-            has_profile = result[0] > 0
-
-            return jsonify({'success': True, 'has_profile': has_profile}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 

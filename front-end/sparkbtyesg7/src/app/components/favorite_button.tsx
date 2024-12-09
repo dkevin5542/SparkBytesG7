@@ -9,46 +9,44 @@ interface FavoriteButtonProps {
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ eventId, userId, onFavoriteSuccess }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFavorite = async () => {
-    setIsLoading(true);
+    setLoading(true);
+    setError(null);
+
     try {
-      const response = await fetch("http://127.0.0.1:5002/api/favorites", {
+      const response = await fetch("http://localhost:5002/api/favorites", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: userId, event_id: eventId }),
+        body: JSON.stringify({ event_id: eventId }),
+        credentials: "include",
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.message); 
-        onFavoriteSuccess();
-      } else if (response.status === 409) {
-        alert("Event is already in favorites.");
-      } else {
+      if (!response.ok) {
         const errorData = await response.json();
-        alert(errorData.error || "Failed to favorite event.");
+        throw new Error(errorData.message || "Failed to add to favorites.");
       }
-    } catch (error) {
-      console.error("Error favoriting event:", error);
-      alert("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
+        onFavoriteSuccess();
+      } catch (err: any) {
+        console.error("Error favoriting event:", err);
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
-    <button
-      onClick={handleFavorite}
-      disabled={isLoading}
-      aria-busy={isLoading}
-      aria-label="Add event to favorites"
-    >
-      {isLoading ? "Adding..." : "Add to Favorites"}
-    </button>
+    <div>
+      <button onClick={handleFavorite} disabled={loading} aria-busy={loading} aria-label="Add event to favorites">
+        {loading ? "Adding..." : "Add to Favorites"}
+      </button>
+      {error && <p className="error-message">{error}</p>}
+    </div>
   );
 };
 
