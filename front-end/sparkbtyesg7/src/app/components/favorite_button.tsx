@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 interface FavoriteButtonProps {
   eventId: number;
@@ -9,7 +9,10 @@ interface FavoriteButtonProps {
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ eventId, userId, onFavoriteSuccess }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleFavorite = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("http://127.0.0.1:5002/api/favorites", {
         method: "POST",
@@ -21,28 +24,32 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ eventId, userId, onFavo
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.message); // Event added to bookmarks
+        console.log(data.message); 
         onFavoriteSuccess();
       } else if (response.status === 409) {
-        // Handle duplicate favorite error
         alert("Event is already in favorites.");
-      } else if (response.status === 400) {
-        // Handle bad request error
-        const errorData = await response.json();
-        alert(errorData.error || "Invalid request.");
       } else {
-        // Handle generic error
         const errorData = await response.json();
-        console.error("Failed to favorite event:", errorData.error || "Unknown error");
         alert(errorData.error || "Failed to favorite event.");
       }
     } catch (error) {
       console.error("Error favoriting event:", error);
       alert("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return <button onClick={handleFavorite}>Add to Favorites</button>;
+  return (
+    <button
+      onClick={handleFavorite}
+      disabled={isLoading}
+      aria-busy={isLoading}
+      aria-label="Add event to favorites"
+    >
+      {isLoading ? "Adding..." : "Add to Favorites"}
+    </button>
+  );
 };
 
 export default FavoriteButton;

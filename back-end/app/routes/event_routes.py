@@ -327,3 +327,59 @@ def del_event(event_id):
             return jsonify({'message': 'Event deleted successfully'}), 200
     except sqlite3.Error as e:
         return jsonify({'error': 'Database error occurred', 'details': str(e)}), 500
+    
+
+@event_bp.route('/api/user_events', methods=['GET'])
+def get_user_events():
+    """
+    Retrieve all events created by the currently logged-in user.
+    """
+    # Extract token from cookie
+    token = request.cookies.get('token')
+    if not token:
+        return jsonify({'success': False, 'message': 'Authorization token is missing.'}), 401
+
+    # Validate token and extract user ID
+    user_id = validate_token(token)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Invalid or expired token.'}), 401
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT e.event_id, e.title, e.description, e.event_date, e.start_time, e.end_time,
+                       e.location, e.address, e.quantity, GROUP_CONCAT(ft.food_type_name) AS dietary_needs
+                FROM Event e
+                LEFT JOIN EventFoodTypes eft ON e.event_id = eft.event_id
+                LEFT JOIN FoodTypes ft ON eft.food_type_id = ft.food_type_id
+                WHERE e.user_id = ?
+                GROUP BY e.event_id
+                """,
+                (user_id,)
+            )
+            events = cursor.fetchall()
+
+            # Format the results
+            formatted_events = [
+                {
+                    "event_id": row["event_id"],
+                    "title": row["title"],
+                    "description": row["description"],
+                    "event_date": row["event_date"],
+                    "start_time": row["start_time"],
+                    "end_time": row["end_time"],
+                    "location": row["location"],
+                    "address": row["address"],
+                    "quantity": row["quantity"],
+                    "dietary_needs": row["dietary_needs"].split(",") if row["dietary_needs"] else []
+                }
+                for row in events
+            ]
+
+        return jsonify({"success": True, "events": formatted_events}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'success': False, 'message': 'Failed to retrieve events.', 'details': str(e)}), 500
+

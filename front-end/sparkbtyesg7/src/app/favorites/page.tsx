@@ -12,40 +12,52 @@ interface FavoriteEvent {
 const FavoritesPage: React.FC<{ userId: number }> = ({ userId }) => {
   const [favorites, setFavorites] = useState<FavoriteEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const fetchFavorites = async () => {
+    setIsLoading(true);
+    setError(null); 
+    try {
+      const response = await fetch(`http://127.0.0.1:5002/api/favorites/${userId}`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          setError(errorData.error || "Failed to fetch favorites");
+        } else {
+          setError("Unexpected response from the server");
+        }
+        return;
+      }
+
+      const data = await response.json();
+      setFavorites(data);
+    } catch (error) {
+      setError("An error occurred while fetching favorites");
+      console.error("Error fetching favorites:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5002/api/favorites/${userId}`, {
-          method: "GET",
-        });
-  
-        // Handle non-JSON responses
-        if (!response.ok) {
-          const contentType = response.headers.get("Content-Type");
-          if (contentType && contentType.includes("application/json")) {
-            const errorData = await response.json();
-            setError(errorData.error || "Failed to fetch favorites");
-          } else {
-            setError("Unexpected response from the server");
-          }
-          return;
-        }
-  
-        const data = await response.json();
-        setFavorites(data);
-      } catch (error) {
-        setError("An error occurred while fetching favorites");
-        console.error("Error fetching favorites:", error);
-      }
-    };
-  
     fetchFavorites();
   }, [userId]);
 
-  
+  if (isLoading) {
+    return <div>Loading your favorite events...</div>;
+  }
+
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        <p>Error: {error}</p>
+        <button onClick={fetchFavorites}>Retry</button>
+      </div>
+    );
   }
 
   return (
@@ -55,13 +67,13 @@ const FavoritesPage: React.FC<{ userId: number }> = ({ userId }) => {
         <p>No favorite events found.</p>
       ) : (
         <ul>
-        {favorites.map((event) => (
-          <li key={event.event_id}>
-            <h3>{event.title}</h3>
-            <p>Date: {event.date}</p>
-            <p>Location: {event.location}</p>
-          </li>
-        ))}
+          {favorites.map((event) => (
+            <li key={event.event_id} style={{ borderBottom: "1px solid #ccc", padding: "10px 0" }}>
+              <h3>{event.title}</h3>
+              <p><strong>Date:</strong> {event.date}</p>
+              <p><strong>Location:</strong> {event.location}</p>
+            </li>
+          ))}
         </ul>
       )}
     </div>
@@ -69,3 +81,4 @@ const FavoritesPage: React.FC<{ userId: number }> = ({ userId }) => {
 };
 
 export default FavoritesPage;
+

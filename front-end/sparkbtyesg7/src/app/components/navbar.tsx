@@ -71,7 +71,7 @@ export const Navbar: React.FC = () => {
           {dropdownVisible && (
             <ul className="dropdown-menu">
               <li onClick={() => handleNavigation('/profile/edit_profile')}>EDIT PROFILE</li>
-              <li onClick={() => handleNavigation('/profile/posted-events')}>POSTED EVENTS</li>
+              <li onClick={() => handleNavigation('/posted_events')}>POSTED EVENTS</li>
               <li onClick={() => handleNavigation('/favorites')}>FAVORITES</li>
               <li onClick={handleLogout}>LOGOUT</li> {/* Trigger logout */}
             </ul>

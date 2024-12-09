@@ -48,7 +48,7 @@ const CreateProfile: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null); // Clear any previous error messages
     try {
-      const response = await fetch('http://localhost:5002/api/update_profile', {
+      const response = await fetch('http://localhost:5002/api/create_profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
