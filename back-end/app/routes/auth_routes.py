@@ -113,13 +113,11 @@ def verify():
         return jsonify({'authenticated': False, 'message': 'Token missing'}), 401
 
     try:
-        payload = validate_token(token)
+        user_id = validate_token(token)
        
-        if not payload:
+        if not user_id:
             return jsonify({'authenticated': False, 'message':'Invalid or expired token'}), 401
         
-        user_id = payload['user_id']
-        print("verify's good")
         return jsonify({'authenticated': True, 'user_id': user_id}), 200
     
     except jwt.ExpiredSignatureError:
