@@ -17,9 +17,11 @@ const FavoritesPage: React.FC<{ userId: number }> = ({ userId }) => {
   const fetchFavorites = async () => {
     setIsLoading(true);
     setError(null); 
+
     try {
-      const response = await fetch(`http://127.0.0.1:5002/api/favorites/${userId}`, {
+      const response = await fetch('http://localhost:5002/favorites', {
         method: "GET",
+        credentials: "include",
       });
 
       if (!response.ok) {
