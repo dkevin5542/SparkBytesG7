@@ -40,19 +40,19 @@ export const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/google-logout', {
+      const response = await fetch('http://localhost:5002/auth/logout', {
         method: 'POST',
-        credentials: 'include', // Include cookies for session handling
+        credentials: 'include',
       });
 
       if (response.ok) {
         console.log('Logout successful');
-        router.push('/login'); // Redirect to login page
+        router.push('/login');
       } else {
         console.error('Logout failed');
       }
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Error during logout:', error)
     }
   };
 

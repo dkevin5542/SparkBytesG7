@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.auth import generate_token
 from app.data.database import get_db_connection
@@ -72,7 +72,17 @@ def login():
             # If login is successful, create and return a JWT.
             token = generate_token(user_id)
 
-            return jsonify({'success': True, 'message': 'Login successful', 'token': token}), 200
+            response = make_response(jsonify({'success': True, 'message': 'Login successful'}))
+            response.set_cookie(
+                'token',
+                token,
+                httponly=True,          # Prevent JavaScript access
+                secure=False,            # Use HTTPS in production
+                samesite='Lax',         # Helps mitigate CSRF
+                max_age=3600            # Set token expiration (1 hour in this example)
+            )
+
+            return response
         
     except sqlite3.Error as e:
         print("Database error:", str(e))
@@ -80,3 +90,12 @@ def login():
     except Exception as e:
         print("Unexpected error:", str(e))
         return jsonify({'success': False, 'message': 'An unexpected error occurred', 'details': str(e)}), 500
+
+@auth_bp.route('/auth/logout', methods=['POST'])
+def logout():
+    """
+    Logs out the user by clearing the JWT token cookie.
+    """
+    response = make_response(jsonify({'success': True, 'message': 'Logged out success'}))
+    response.delete_cookie('token')
+    return response

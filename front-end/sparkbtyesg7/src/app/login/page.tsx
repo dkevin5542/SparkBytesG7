@@ -55,6 +55,7 @@ export default function Login() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include',
             });
 
             if (!response.ok) {
@@ -64,10 +65,8 @@ export default function Login() {
 
             const data = await response.json();
 
-            localStorage.setItem('token', data.token);
-
-            // Redirect to creating a profile upon successful login
-            router.push('/createprofile');
+            // Redirect to the appropriate page upon login (home)
+            router.push('/');
         } catch (err: any) {
             setError(err.message);
         } finally {
