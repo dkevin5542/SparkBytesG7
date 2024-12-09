@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify
 from app.data.database import get_db_connection
 from app.auth import validate_token
 import sqlite3
@@ -10,11 +10,13 @@ def profile_status():
     """
     Check if the user's profile is complete.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
-    
-    token = token.split(" ")[1]
+    # Extract token from cookie
+    token = request.cookies.get('token')
+
+    if not token:
+        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
+
+    # Validate the token and extract the user ID
     user_id = validate_token(token)
 
     if not user_id:
@@ -107,14 +109,14 @@ def create_profile():
     Requires the user to be logged in (session should have user_id).
     """
 
-    # Check if user is logged in
-    user_id = session.get('user_id')
+    # Extract token from cookie
+    token = request.cookies.get('token')
 
-    # debug statement [d]
-    print('user_id is ', user_id)
+    if not token:
+        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
 
-    if not user_id:
-        return jsonify({'success': False, 'message': 'Unauthorized. Please log in.'}), 401
+    # Validate the token and extract the user ID
+    user_id = validate_token(token)
 
     data = request.get_json()
     print(data)
@@ -184,19 +186,22 @@ def create_profile():
 def get_profile():
     """
     Fetch the user's profile information.
-    Requires the user to be logged in (session should have user_id).
     """
-    user_id = session.get('user_id')
+    # Extract token from cookie
+    token = request.cookies.get('token')
 
-    if not user_id:
-        return jsonify({'message': 'Unauthorized. Please log in.'}), 401
+    if not token:
+        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
+
+    # Validate the token and extract the user ID
+    user_id = validate_token(token)
 
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                SELECT name, bio, interests, bu_id, diet, preferred_language
+                SELECT name, bio, interests, bu_id, language
                 FROM User
                 WHERE user_id = ?
                 """,
@@ -213,8 +218,7 @@ def get_profile():
                 'bio': user[1],
                 'interests': user[2],
                 'buID': user[3],
-                'diet': user[4],
-                'language': user[5],
+                'language': user[4],
             }
             return jsonify(user_profile), 200
 
@@ -226,9 +230,14 @@ def has_profile():
     """
     Check if the logged-in user already has a profile.
     """
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'has_profile': False}), 401  # User not logged in
+    # Extract token from cookie
+    token = request.cookies.get('token')
+
+    if not token:
+        return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
+
+    # Validate the token and extract the user ID
+    user_id = validate_token(token)
 
     try:
         with get_db_connection() as conn:
@@ -236,7 +245,8 @@ def has_profile():
             cursor.execute("SELECT COUNT(*) FROM UserProfile WHERE user_id = ?", (user_id,))
             result = cursor.fetchone()
             has_profile = result[0] > 0
-            return jsonify({'has_profile': has_profile}), 200
+
+            return jsonify({'success': True, 'has_profile': has_profile}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
