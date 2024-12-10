@@ -1,80 +1,123 @@
-# Spark Bytes Documentation
+# CS391 Documentation
+
+## Documentation: [Project Plan](https://github.com/dkevin5542/SparkBytesG7/blob/rework/project_plan.md)
+
+### Usage
+Spark Bytes is a software platform that allows faculty members to post events offering free food and snacks. Students can RSVP and access details about these events, including the type and quantity of food, location, and time.
+
+If ypu want a more deatailed documentaion, click [here](https://docs.google.com/document/d/1M3eSCR9I4OHm3ZlkWRKJBUXCAXKYUQEbtd5OQ0mwtz8/edit?usp=sharing)
 
 ---
 
-## 1. Usage Documentation
+## Installation Guide
 
-### User Guides
-Instructions on how to use the Spark Bytes platform, including how to sign up, browse events, RSVP to events, and set dietary preferences.
+Before attempting to clone this repository to use the application, ensure you have **Node.js** installed on your machine, as this project runs on **Next.js** and **React** for the front-end. For the back-end, you need **Flask** installed on your machine.
 
-### Admin Guides
-Details for administrators on managing event postings, moderating user content, and handling user feedback.
+### Node Installation
+Refer to the [Node.js installation guide](https://nodejs.org/en/download/package-manager).
 
-### Installation Guides
-Steps for setting up the project locally for development or testing, including system requirements, installation of dependencies, and running the server and frontend.
+### Next.js Installation
+Refer to the [Next.js documentation](https://nextjs.org/docs/app/getting-started/installation).
 
-### Release Notes
-Information on the current release of Spark Bytes, including new features, bug fixes, and known issues in this version.
+### Flask Installation
+Refer to the [Flask documentation](https://flask.palletsprojects.com/en/stable/installation/).
+
+### Notes
+- This documentation assumes you have Python installed on your machine and basic knowledge of Git and terminal commands.
+
+### Steps
+1. Clone the repository to your local machine.
+2. Navigate to the `/front-end/sparkbytesg7` directory.
+3. Run `npm install` to install all necessary libraries.
+4. Open two terminal instances:
+   - **Front-End Steps**:
+     1. Navigate to `/front-end/sparkbytesg7`.
+     2. Run `npm run dev`.
+     3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+   - **Back-End Steps**:
+     1. Navigate to `/back-end`.
+     2. Run `python main.py`.
 
 ---
 
-## 2. Design Documentation
+## Design/Architecture
 
-### Requirements
-Functional and non-functional requirements of the project, including descriptions of key features like event posting, RSVP functionality, dietary filters, and notifications.
+### Front-End
+- **Technologies**: React, Next.js, Node.js, CSS, TypeScript
 
-### Architecture & Design
-Overview of the system architecture, including diagrams for the backend (Flask API) and frontend (React/Next.js), data flow, and user interaction. This section would also cover the integration with external services like Google Maps and Calendar.
-
-### Technical Specifications
-Detailed technical specifications, including API endpoints, data models, authentication mechanisms, and error handling.
-
----
-
-## 3. System Documentation
-
-### Database
-Documentation of the database schema, tables, and relationships, including explanations of how event, user, and RSVP data are stored and retrieved.
+### Back-End
+- **Technologies**: SQLite, Flask, Python
 
 ### Infrastructure
-Explanation of the deployment environment, servers, and any cloud services used for hosting the platform. This might include the setup for local development and staging environments.
-
-### Interfaces
-Documentation of the external interfaces, such as the APIs used for Google Authentication, Maps, and Calendar, with descriptions of the request/response structures and authentication flows.
+- **Single-Page Application (SPA)**: Uses SPA architecture. Each component is dynamically replaced without reloading pages.
+- **Database**: SQLite
 
 ---
 
-## 4. Project Documentation
-
-### Project Plans
-High-level project plan, including goals, milestones, and timelines for each development phase (planning, design, development, testing).
-
-### Agile Plans & Results
-Documentation of the Agile sprints, including sprint goals, tasks, and outcomes. This section would also summarize retrospectives and improvements.
-
-### Testing Plans and Results
-Description of the testing strategy, including unit tests, integration tests, and end-to-end tests, as well as any automated testing setup. This section could also include test results and known issues.
-
-### Meeting Notes
-Summaries of project meetings, key decisions made, action items, and any changes to the project scope or timeline.
+## Technical Specifications
+- **Python**: v3.11.2
+- **Flask**: v3.0.0
+- **Node.js**: v18.18.2
+- **React**: v19.0.0
+- **Next.js**: v15.0.1
 
 ---
 
-## 5. Support Documentation
+## Interfaces
 
-### Troubleshooting Guides
-Common issues and solutions related to using the Spark Bytes platform, such as login issues, event posting errors, or notification problems.
+### Front-End Files
+- **`src/app`**: Contains all front-end components.
+  - **`about`**: About page logic (`page.tsx`).
+  - **`all_rsvp`**: Displays events the user RSVP'd for.
+  - **`components`**:
+    - `dashboard.tsx`: Manages dashboard layout (currently unused).
+    - `eventcard.tsx`: Styles event cards and handles event redirection.
+    - `eventform.tsx`: Handles event creation and storage.
+    - `eventlist.tsx`: Formats event cards into a list.
+    - `favorite_button.tsx`: Handles user favorites.
+    - `nav-bar.tsx`: Navigation bar logic and logout functionality.
+  - **`contact`**: Displays contact information.
+  - **`create-event`**: Form for posting new events.
+  - **`favorites`**: Displays user favorite events.
+  - **`fonts`**: Custom font files.
+  - **`login`**: Manages login logic and redirection.
+  - **`logout`**: Currently unused.
+  - **`posted_events`**: Displays user-created events.
+  - **`rsvpform`**: RSVP form logic.
+  - **`styles`**: Contains CSS files for the application.
+  - **`page.tsx`**: Home page or root page logic.
 
-### FAQs
-Frequently asked questions about the Spark Bytes platform, covering topics like "How to RSVP for an event?" and "How to set dietary preferences?"
-
-### Service-Level Agreements (SLA)
-If applicable, a description of the SLAs for platform availability and response times for bug reports or support requests.
-
-### Incident & Issue Tracking
-Procedures for reporting bugs and tracking issues through a ticketing system (e.g., GitHub Issues). This section could include links to the issue tracker and guidelines for reporting problems.
+### Back-End Files
+- **`main.py`**: Flask application entry point.
+- **`auth`**: Handles tokens and authentication.
+- **`data`**: SQLite database files.
+- **`flask_session`**: Flask session files.
+- **`routes`**:
+  - `auth_routes.py`: Authentication-related routes.
+  - `event_routes.py`: Event-related routes.
+  - `favorite_routes.py`: Favorite-related routes.
+  - `review_routes.py`: Review-related routes (not implemented).
+  - `rsvp_routes.py`: RSVP-related routes.
+  - `user_route.py`: User-related routes.
 
 ---
 
-This documentation structure provides a comprehensive and organized set of resources to support users, administrators, developers, and other stakeholders involved with Spark Bytes. Each section can be expanded with specific details based on project updates and additional requirements.
-"""
+## Database
+This application uses **SQLite** as its database. Learn more about SQLite [here](https://www.sqlite.org/).
+
+---
+
+## Troubleshooting
+
+1. **Front-End Issues**
+   - Ensure you are in the `/front-end/sparkbytesg7` directory.
+   - Run `npm install` to install missing packages.
+
+2. **Back-End Issues**
+   - Check that necessary libraries (e.g., SQLite, JWT) are installed.
+
+3. **Contact Team Members**
+   - Kevin: 7183168052, [dkevin@bu.edu](mailto:dkevin@bu.edu) (Front-End)
+   - Dana: 6179011450, [dalzahed@bu.edu](mailto:dalzahed@bu.edu) (Front-End)
+   - Ming: 4159965446, [soongming18@gmail.com](mailto:soongming18@gmail.com) (Back-End)
+   - Josh: 9173764766, [jhsualva@bu.edu](mailto:jhsualva@bu.edu) (Back-End)
