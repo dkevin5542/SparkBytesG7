@@ -86,6 +86,8 @@ def create_profile():
     diet = data.get('diet', [])
     language = data.get('language')
 
+    print("Diet received from client:", diet)
+
     # Validate input data
     if bio is not None and not isinstance(bio, str):
         return jsonify({'success': False, 'message': 'Invalid bio'}), 400
@@ -103,6 +105,8 @@ def create_profile():
         # Update the user's profile in the database
         with get_db_connection() as conn:
             cursor = conn.cursor()
+
+            # Update user profile fields
             cursor.execute(
                 """
                 UPDATE User
@@ -110,17 +114,23 @@ def create_profile():
                 WHERE user_id = ?
                 """,
                 (bio, interests, language, user_id)
-            )
-            user_id = cursor.lastrowid
+            ).rowcount
+
+            # Update user diet
+
+            diet_update = 0
+
+            cursor.execute("DELETE FROM UserFoodTypes WHERE user_id = ?", (user_id,))
 
             for food_type in diet:
                 cursor.execute(
                     """
-                    INSERT INTO UserFoodTypes (user_id, food_type_id)
+                    INSERT OR REPLACE INTO UserFoodTypes (user_id, food_type_id)
                     SELECT ?, food_type_id FROM FoodTypes WHERE food_type_name = ?
                     """,
                     (user_id, food_type)
-                )
+                ).rowcount
+                
             conn.commit()
 
         # Check if the update was successful

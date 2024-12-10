@@ -77,7 +77,10 @@ const ProfilePage: React.FC = () => {
           <li><strong>Bio:</strong> {profileData.bio || 'N/A'}</li>
           <li><strong>Interests:</strong> {profileData.interests || 'N/A'}</li>
           <li><strong>BU ID:</strong> {profileData.buID}</li>
-          <li><strong>Diet:</strong> {profileData.diet || 'N/A'}</li>
+          <strong>Diet:</strong>{' '}
+            {Array.isArray(profileData.dietary_preferences) && profileData.dietary_preferences.length > 0
+              ? profileData.dietary_preferences.join(', ')
+              : profileData.dietary_preferences || 'N/A'}
           <li><strong>Language:</strong> {profileData.language || 'N/A'}</li>
         </ul>
       </div>
