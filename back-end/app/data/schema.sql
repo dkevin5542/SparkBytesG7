@@ -78,7 +78,6 @@ CREATE TABLE RSVP (
     rsvp_id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     event_id INTEGER NOT NULL,
-    rsvp_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status TEXT CHECK(status IN ('Going', 'Interested', 'Not Going')) DEFAULT 'Going',
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES Event(event_id) ON DELETE CASCADE
