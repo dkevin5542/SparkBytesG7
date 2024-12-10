@@ -8,6 +8,8 @@ Spark Bytes is a software platform that allows faculty members to post events of
 This is a very summarized version of the original documentation. If you want a more detailed documentation, click [here](https://docs.google.com/document/d/1M3eSCR9I4OHm3ZlkWRKJBUXCAXKYUQEbtd5OQ0mwtz8/edit?usp=sharing)
 
 You can also find the link to out presentation [here](https://docs.google.com/presentation/d/1qJwIriJ1K653EdNXezusuuzxBLIbrUgkiwyU-w7nGYM/edit?usp=sharing)
+
+
 ---
 
 ## Installation Guide
