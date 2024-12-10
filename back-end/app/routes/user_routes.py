@@ -49,49 +49,6 @@ def profile_status():
     except Exception as e:
         return jsonify({'success': False, 'message': 'An error occurred', 'details': str(e)}), 500
 
-
-# def profile_status():
-#     """
-#     Check if the user's profile is complete (necessary fields, language and diet).
-#     """
-#     # Extract token from cookie
-#     token = request.cookies.get('token')
-
-#     if not token:
-#         return jsonify({'success': False, 'message': 'Authorization token is missing or invalid.'}), 401
-
-#     # Validate the token and extract the user ID
-#     user_id = validate_token(token)
-
-#     if not user_id:
-#         return jsonify({'success': False, 'message': 'Invalid token'}), 401
-
-#     try:
-#         with get_db_connection() as conn:
-#             cursor = conn.cursor()
-
-#             # Check User table fields
-#             cursor.execute("SELECT language FROM User WHERE user_id = ?", (user_id,))
-#             user = cursor.fetchone()
-
-#             print("User row:", dict(user)) 
-
-#             if not user or not user['language']:
-#                 return jsonify({'profile_complete': False, 'message': 'Missing language field'}), 200
-
-#             # Check dietary preferences
-#             cursor.execute("SELECT COUNT(*) AS diet_count FROM UserFoodTypes WHERE user_id = ?", (user_id,))
-#             diet_count = cursor.fetchone()['diet_count']
-
-#             if diet_count == 0:
-#                 return jsonify({'profile_complete': False, 'message': 'Missing dietary preferences'}), 200
-
-#             return jsonify({'profile_complete': True}), 200
-
-#     except Exception as e:
-#         return jsonify({'success': False, 'message': 'An error occurred', 'details': str(e)}), 500
-
-
 @user_bp.route('/api/users', methods=['GET'])
 def get_users():
     """
@@ -110,10 +67,8 @@ def get_users():
 @user_bp.route('/api/create_profile', methods=['POST'])
 def create_profile():
     """
-    Updates the user's profile information (name, bio, interests, BU ID, diet and language).
-    Requires the user to be logged in (session should have user_id).
+    Updates the user's profile information (name, bio, interests, diet and language).
     """
-
     # Extract token from cookie
     token = request.cookies.get('token')
 
@@ -175,7 +130,7 @@ def create_profile():
                     """,
                     (user_id, food_type)
                 ).rowcount
-                
+
             conn.commit()
 
         # Check if the update was successful
