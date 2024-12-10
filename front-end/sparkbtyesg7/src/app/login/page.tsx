@@ -34,13 +34,13 @@ export default function Login() {
             }
 
             // Step 2: Check if the user has a profile
-            const profileResponse = await fetch('http://localhost:5002/api/has_profile', {
+            const profileResponse = await fetch('http://localhost:5002/auth/profile_status', {
                 method: 'GET',
                 credentials: 'include', // Include cookies in the request
             });
 
             if (!profileResponse.ok) {
-                console.error('Error fetching has_profile status:', profileResponse.status);
+                console.error('Error fetching profile_complete status:', profileResponse.status);
                 throw new Error('Failed to check profile status');
             }
 
