@@ -1,49 +1,51 @@
 .profile-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #f7f9fc;
-    padding: 2rem;
-  }
-  
-  .profile-card {
-    width: 100%;
-    max-width: 600px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    animation: fadeIn 0.5s ease-out;
-  }
-  
-  .profile-card h1 {
-    font-size: 2rem;
-    color: #333333;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-  }
-  
-  .profile-card p {
-    font-size: 1.1rem;
-    color: #555555;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-  
-  .profile-card p strong {
-    color: #4a90e2;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+.profile-container {
+  background-color: white;
+  width: 80%; /* Adjusted for larger width */
+  max-width: 800px; /* Increased max-width */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 40px; /* Increased padding */
+  text-align: center;
+}
+
+.profile-container h1 {
+  font-size: 100px; /* Larger font size */
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.profile-container p {
+  font-size: 50px; /* Increased font size */
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.profile-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.profile-container li {
+  font-size: 50px; /* Increased font size for list items */
+  color: #444;
+  margin-bottom: 25px; /* More spacing between items */
+}
+
+.profile-container li strong {
+  color: #0070f3; /* Highlighted field names */
+}
+
+.profile-container ul li:last-child {
+  margin-bottom: 0;
+}

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import '@/app/styles/page.css';
-import '@/app/styles/profile.css';
-import Navbar from '../components/navbar';
+import React, { useEffect, useState } from "react";
+import "@/app/styles/page.css";
+import "@/app/styles/profile.css";
+import Navbar from "../components/navbar";
 
 /**
  * Profile Page Component
@@ -26,19 +26,19 @@ const ProfilePage: React.FC = () => {
     // Fetch profile data from the backend
     const fetchProfileData = async () => {
       try {
-        const response = await fetch('http://localhost:5002/api/get_profile', {
-          method: 'GET',
-          credentials: 'include', // Include cookies for authentication
+        const response = await fetch("http://localhost:5002/api/get_profile", {
+          method: "GET",
+          credentials: "include", // Include cookies for authentication
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch profile data');
+          throw new Error("Failed to fetch profile data");
         }
 
         const data = await response.json();
         setProfileData(data); // Save profile data to state
       } catch (err: any) {
-        setError(err.message || 'Something went wrong');
+        setError(err.message || "Something went wrong");
       }
     };
 
@@ -73,15 +73,28 @@ const ProfilePage: React.FC = () => {
         <h1>Welcome, {profileData.name}!</h1>
         <p>Here is your profile information:</p>
         <ul>
-          <li><strong>Name:</strong> {profileData.name}</li>
-          <li><strong>Bio:</strong> {profileData.bio || 'N/A'}</li>
-          <li><strong>Interests:</strong> {profileData.interests || 'N/A'}</li>
-          <li><strong>BU ID:</strong> {profileData.buID}</li>
-          <strong>Diet:</strong>{' '}
-            {Array.isArray(profileData.dietary_preferences) && profileData.dietary_preferences.length > 0
-              ? profileData.dietary_preferences.join(', ')
-              : profileData.dietary_preferences || 'N/A'}
-          <li><strong>Language:</strong> {profileData.language || 'N/A'}</li>
+          <li>
+            <strong>Name:</strong> {profileData.name}
+          </li>
+          <li>
+            <strong>Bio:</strong> {profileData.bio || "N/A"}
+          </li>
+          <li>
+            <strong>Interests:</strong> {profileData.interests || "N/A"}
+          </li>
+          <li>
+            <strong>BU ID:</strong> {profileData.buID}
+          </li>
+          <li>
+            <strong>Diet:</strong>{" "}
+            {Array.isArray(profileData.dietary_preferences) &&
+            profileData.dietary_preferences.length > 0
+              ? profileData.dietary_preferences.join(", ")
+              : profileData.dietary_preferences || "N/A"}
+          </li>
+          <li>
+            <strong>Language:</strong> {profileData.language || "N/A"}
+          </li>
         </ul>
       </div>
     </div>
