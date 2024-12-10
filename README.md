@@ -1,138 +1,80 @@
-# Team 7 Project Plan
+# Spark Bytes Documentation
 
-## 1. Requirements
+---
 
-### Introduction:
+## 1. Usage Documentation
 
-- **Project Name**: Spark Bytes
-- **Date**: 10/15/2024
-- **Authors**: Ming Hill, Kevin Dong, Dana Alzahed, Joshua Alvarez
-- **Purpose**: Spark Bytes is a software platform that allows faculty members to post events offering free food and snacks. Students can RSVP and access details about these events, including the type and quantity of food, location, and time. The goal is to reduce food waste and provide students with opportunities for free food.
-- **Stakeholders**: Faculty members, students, university administration.
+### User Guides
+Instructions on how to use the Spark Bytes platform, including how to sign up, browse events, RSVP to events, and set dietary preferences.
 
-### Scope:
+### Admin Guides
+Details for administrators on managing event postings, moderating user content, and handling user feedback.
 
-- **Problem/Opportunity**: Spark Bytes helps reduce food waste from over-purchasing for events and provides students with access to free food.
-- **Target Audience**: Boston University students and faculty members with BU emails.
-- **Use Cases**: 
-    - As a user, I want to know the location and type of food available at an event so I can attend events that fit my dietary preferences.
+### Installation Guides
+Steps for setting up the project locally for development or testing, including system requirements, installation of dependencies, and running the server and frontend.
 
-### Functional Requirements:
+### Release Notes
+Information on the current release of Spark Bytes, including new features, bug fixes, and known issues in this version.
 
-- **Main Dashboard**:
-    - Switch between list and calendar view of upcoming events.
-    - Sort or filter events by keywords, distance, dietary needs, date/time.
-    - RSVP to events.
-    - Favorite/bookmark events.
-- **Login System**:
-    - Google Login API to verify BU emails.
-- **Notifications**:
-    - Receive notifications for new events or RSVPs via in-app, email, or SMS.
-    - Filter notifications by location, time, food type, etc.
-- **Dietary Selection**:
-    - Filter events by dietary options (gluten-free, kosher, vegetarian, etc.).
-    - Preset filters for future use.
-- **Terms/Conditions Page**:
-    - Users must agree to terms before using the application.
-- **User Profile**:
-    - Edit profile information and dietary settings.
-    - Set preferred language (English, Mandarin, Arabic, Spanish).
-- **Google Maps Redirection**:
-    - Redirect to Google Maps for event location.
-- **Event Posting**:
-    - Authorized users can post official events.
-    - Students can post unofficial events if they have extra food.
-- **Feedback/Rating System**:
-    - Users can provide feedback after attending events.
-- **Customization**:
-    - Switch between light and dark mode for the dashboard.
+---
 
-### Non-Functional Requirements:
+## 2. Design Documentation
 
-- **Usability**:
-    - Simple and intuitive interface, responsive design for various screen sizes.
-- **Performance**:
-    - Load time under 5 seconds, filters and sorting within 3 seconds.
-    - Scalable as users and data increase.
-    - 99.9% uptime.
-- **Security**:
-    - Use BU Single Sign-On, optional 2-factor authentication.
-    - Encrypt data in transit and at rest.
-    - Comply with data protection laws and university regulations.
+### Requirements
+Functional and non-functional requirements of the project, including descriptions of key features like event posting, RSVP functionality, dietary filters, and notifications.
 
-### Technical Requirements:
+### Architecture & Design
+Overview of the system architecture, including diagrams for the backend (Flask API) and frontend (React/Next.js), data flow, and user interaction. This section would also cover the integration with external services like Google Maps and Calendar.
 
-- **Front-End**:
-    - React/Next.js, Typescript, CSS.
-- **Back-End**:
-    - Express, Python Flask, JavaScript.
-- **APIs**:
-    - Google Authentication, Google Maps, Calendar API.
-- **Database**:
-    - TBD (local JSON file for now).
+### Technical Specifications
+Detailed technical specifications, including API endpoints, data models, authentication mechanisms, and error handling.
 
-### Constraints and Assumptions:
+---
 
-- **Constraints**:
-    - Budget, compliance with BU policies, time limitations.
-- **Assumptions**:
-    - Students will use the application regularly, with internet access and up-to-date technology.
+## 3. System Documentation
 
-### Risks:
+### Database
+Documentation of the database schema, tables, and relationships, including explanations of how event, user, and RSVP data are stored and retrieved.
 
-- **Data Security**:
-    - The app handles sensitive user data (personal info, school credentials, location). Encryption and secure authentication are critical to mitigate breaches.
-- **Low User Adoption**:
-    - Surveys and user feedback can inform improvements. Marketing will raise awareness of the app.
+### Infrastructure
+Explanation of the deployment environment, servers, and any cloud services used for hosting the platform. This might include the setup for local development and staging environments.
 
-## 2. Resources
+### Interfaces
+Documentation of the external interfaces, such as the APIs used for Google Authentication, Maps, and Calendar, with descriptions of the request/response structures and authentication flows.
 
-| Name  | Role            |
-|-------|-----------------|
-| Ming  | Full-Stack Dev   |
-| Dana  | Full-Stack Dev   |
-| Kevin | Full-Stack Dev   |
-| Josh  | Full-Stack Dev   |
+---
 
-## 3. Task Breakdown
+## 4. Project Documentation
 
-| Phase          | Deliverables             | Tasks                                                 | Timeline | Resources  |
-|----------------|--------------------------|-------------------------------------------------------|----------|------------|
-| **Planning**   | Requirements Document     | Define project goals, requirements, stakeholders       | Sprint 1 | All Members|
-| **Design**     | System Design Document    | Collect APIs, create UI prototypes, system design doc  | Sprint 2-3 | All Members|
-| **Development**| Code Modules, Unit Tests  | Develop frontend with React/Next.js, backend with Flask/Express, integrate APIs and systems | Sprint 4-5 | All Members|
-| **Testing**    | Test Cases, Reports       | Test for bugs, data leaks, scalability, and performance | Sprint 6  | All Members|
-| **Deployment** | Completed Web App         | Deploy app, write user manuals, finalize documentation | Sprint 7  | All Members|
+### Project Plans
+High-level project plan, including goals, milestones, and timelines for each development phase (planning, design, development, testing).
 
-## 4. Schedule
+### Agile Plans & Results
+Documentation of the Agile sprints, including sprint goals, tasks, and outcomes. This section would also summarize retrospectives and improvements.
 
-| Task ID | Task Description                      | Sprint | Status    |
-|---------|----------------------------------------|--------|-----------|
-| 1       | Design main dashboard interface        | 1-8    | Not Started |
-| 2       | Develop login/signup system            | 1-8    | Not Started |
-| 3       | Set up notification system             | 2-6    | Not Started |
-| 4       | Connect backend with frontend          | 1-8    | Not Started |
-| 5       | Develop event posting system           | 2-4    | Not Started |
-| 6       | Write terms and conditions page        | 2      | Not Started |
-| 7       | Create user profile page               | 2-3    | Not Started |
-| 8       | Create event filter system             | 3-4    | Not Started |
-| 9       | Add search bar to navbar               | 2-3    | Not Started |
-| 10      | Create feedback system                 | 8      | Not Started |
-| 11      | Add light/dark mode customization      | 8      | Not Started |
+### Testing Plans and Results
+Description of the testing strategy, including unit tests, integration tests, and end-to-end tests, as well as any automated testing setup. This section could also include test results and known issues.
 
-## 5. Communication Plan
+### Meeting Notes
+Summaries of project meetings, key decisions made, action items, and any changes to the project scope or timeline.
 
-- **Regular Meetups**:
-    - Every Friday, 10:10 a.m. - 11:00 a.m., in the lab.
-    - Additional meetups if needed in CDS lounge.
-- **Exceptions**:
-    - Use Zoom if unable to meet in person. Notify group if unable to attend.
-- **Daily Standups**:
-    - Use text messaging for quick updates and questions.
+---
 
-### Contacts:
+## 5. Support Documentation
 
-- **Kevin**: 718-316-8052, dkevin@bu.edu
-- **Dana**: 617-901-1450, dalzahed@bu.edu
-- **Ming**: 415-996-5446, soongming18@gmail.com
-- **Josh**: 917-376-4766, jhsualva@bu.edu
+### Troubleshooting Guides
+Common issues and solutions related to using the Spark Bytes platform, such as login issues, event posting errors, or notification problems.
+
+### FAQs
+Frequently asked questions about the Spark Bytes platform, covering topics like "How to RSVP for an event?" and "How to set dietary preferences?"
+
+### Service-Level Agreements (SLA)
+If applicable, a description of the SLAs for platform availability and response times for bug reports or support requests.
+
+### Incident & Issue Tracking
+Procedures for reporting bugs and tracking issues through a ticketing system (e.g., GitHub Issues). This section could include links to the issue tracker and guidelines for reporting problems.
+
+---
+
+This documentation structure provides a comprehensive and organized set of resources to support users, administrators, developers, and other stakeholders involved with Spark Bytes. Each section can be expanded with specific details based on project updates and additional requirements.
+"""
