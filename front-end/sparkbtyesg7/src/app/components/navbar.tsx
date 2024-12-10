@@ -70,9 +70,10 @@ export const Navbar: React.FC = () => {
           </button>
           {dropdownVisible && (
             <ul className="dropdown-menu">
-              <li onClick={() => handleNavigation('/profile/edit_profile')}>EDIT PROFILE</li>
+              <li onClick={() => handleNavigation('/profile')}>PROFILE</li>
               <li onClick={() => handleNavigation('/posted_events')}>POSTED EVENTS</li>
               <li onClick={() => handleNavigation('/favorites')}>FAVORITES</li>
+              <li onClick={() => handleNavigation('/all_rsvp')}>RSVP Status</li>
               <li onClick={handleLogout}>LOGOUT</li> {/* Trigger logout */}
             </ul>
           )}

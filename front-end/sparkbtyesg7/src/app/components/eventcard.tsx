@@ -1,6 +1,8 @@
 import React from "react";
 import "@/app/styles/eventCard.css";
 import FavoriteButton from "./favorite_button";
+import { useRouter } from "next/navigation";
+
 
 interface Event {
   event_id: number;
@@ -22,6 +24,8 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
+  const router = useRouter();
+
   if (!event || Object.keys(event).length === 0) {
     return <div className="event-card">No event details available</div>;
   }
@@ -30,8 +34,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
     alert(`Event "${event.title}" added to favorites!`);
   };
 
+  const handleCardClick = () => {
+    router.push(`/rsvpform`); // Redirect to RSVP form
+  };
+
   return (
-    <div className="event-card">
+    <div className="event-card"
+    onClick={handleCardClick} 
+    style={{ cursor: "pointer" }}>
       <h3 className="event-title">{event.title}</h3>
       <p className="event-description">{event.description}</p>
       <p className="event-date">
