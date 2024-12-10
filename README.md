@@ -5,7 +5,7 @@
 ### Usage
 Spark Bytes is a software platform that allows faculty members to post events offering free food and snacks. Students can RSVP and access details about these events, including the type and quantity of food, location, and time.
 
-If ypu want a more deatailed documentaion, click [here](https://docs.google.com/document/d/1M3eSCR9I4OHm3ZlkWRKJBUXCAXKYUQEbtd5OQ0mwtz8/edit?usp=sharing)
+This is a very summarized version of the original documentation. If you want a more detailed documentation, click [here](https://docs.google.com/document/d/1M3eSCR9I4OHm3ZlkWRKJBUXCAXKYUQEbtd5OQ0mwtz8/edit?usp=sharing)
 
 ---
 
