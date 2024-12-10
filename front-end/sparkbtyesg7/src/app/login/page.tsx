@@ -50,7 +50,7 @@ export default function Login() {
             if (profileData.has_profile) {
                 router.push('/'); // Redirect to home if profile exists
             } else {
-                router.push('/create-profile'); // Redirect to create-profile if profile does not exist
+                router.push('/createprofile'); // Redirect to create-profile if profile does not exist
             }
         } catch (err: any) {
             setError(err.message);

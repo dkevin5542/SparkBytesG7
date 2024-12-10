@@ -8,7 +8,7 @@ user_bp = Blueprint('user_bp', __name__)
 @user_bp.route('/auth/profile_status', methods=['GET'])
 def profile_status():
     """
-    Check if the user's profile is complete.
+    Check if the user's profile is complete (necessary fields, language and diet).
     """
     # Extract token from cookie
     token = request.cookies.get('token')
@@ -27,18 +27,20 @@ def profile_status():
             cursor = conn.cursor()
 
             # Check User table fields
-            cursor.execute("SELECT interests, language FROM User WHERE user_id = ?", (user_id,))
+            cursor.execute("SELECT language FROM User WHERE user_id = ?", (user_id,))
             user = cursor.fetchone()
 
-            if not user or not user['interests'] or not user['language']:
-                return jsonify({'profile_complete': False}), 200
+            print("User row:", dict(user)) 
+
+            if not user or not user['language']:
+                return jsonify({'profile_complete': False, 'message': 'Missing language field'}), 200
 
             # Check dietary preferences
             cursor.execute("SELECT COUNT(*) AS diet_count FROM UserFoodTypes WHERE user_id = ?", (user_id,))
             diet_count = cursor.fetchone()['diet_count']
 
             if diet_count == 0:
-                return jsonify({'profile_complete': False}), 200
+                return jsonify({'profile_complete': False, 'message': 'Missing dietary preferences'}), 200
 
             return jsonify({'profile_complete': True}), 200
 
