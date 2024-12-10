@@ -61,67 +61,7 @@ export default function Login() {
 
 
 
-    //old one, doesn't work yet
-    // useEffect(() => {
 
-    //     // Check if the user already has a profile
-    //     const checkHasProfile = async () => {
-    //         try {
-    //             const response = await fetch('http://localhost:5002/auth/profile_status', {
-    //                 method: 'GET',
-    //                 credentials: 'include', // Include cookies in the request
-    //             });
-
-    //             if (!response.ok) {
-    //                 console.error('Error fetching profile status:', response.status);
-    //                 return;
-    //             }
-
-    //             const data = await response.json();
-
-    //             if (data.profile_complete) {
-    //                 router.push('/'); // Redirect to home if profile exists
-    //             } else {
-    //                 router.push('/create-profile'); // Redirect to create profile if profile doesn't exist
-    //             }
-    //         } catch (err) {
-    //             console.error('Error checking profile status:', err);
-    //         }
-    //     };
-
-    //     // checkProfileStatus();
-    //     checkHasProfile();
-    // }, [router]);
-
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-
-    //     try {
-    //         const response = await fetch('http://localhost:5002/auth/login', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ email, password }),
-    //             credentials: 'include',
-    //         });
-
-    //         if (!response.ok) {
-    //             const errorData = await response.json();
-    //             throw new Error(errorData.message || 'Invalid credentials');
-    //         }
-
-    //         const data = await response.json();
-
-    //         // Redirect to the appropriate page upon login (home)
-    //         router.push('/');
-    //     } catch (err: any) {
-    //         setError(err.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     return (
         <div className="wrapper">
