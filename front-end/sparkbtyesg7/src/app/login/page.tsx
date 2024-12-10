@@ -47,7 +47,7 @@ export default function Login() {
             const profileData = await profileResponse.json();
 
             // Step 3: Redirect based on the profile existence
-            if (profileData.has_profile) {
+            if (profileData.profile_complete) {
                 router.push('/'); // Redirect to home if profile exists
             } else {
                 router.push('/createprofile'); // Redirect to create-profile if profile does not exist
