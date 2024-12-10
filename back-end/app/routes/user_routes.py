@@ -79,28 +79,19 @@ def create_profile():
     user_id = validate_token(token)
 
     data = request.get_json()
-    print(data)
     
-    # Retrieve name, bio, and interests from the request
-    name = data.get('name')
+    # Retrieve bio, diet, language and interests from the request
     bio = data.get('bio')
     interests = data.get('interests')
-    bu_id = data.get('buID')
     diet = data.get('diet', [])
     language = data.get('language')
 
     # Validate input data
-    if not isinstance(name, str) or not name.strip():
-        return jsonify({'success': False, 'message': 'Invalid name'}), 400
-
     if bio is not None and not isinstance(bio, str):
         return jsonify({'success': False, 'message': 'Invalid bio'}), 400
 
     if interests is not None and not isinstance(interests, str):
         return jsonify({'success': False, 'message': 'Invalid interests'}), 400
-
-    if not isinstance(bu_id, str) or not bu_id.strip():
-        return jsonify({'success': False, 'message': 'Invalid BU ID'}), 400
 
     if diet is not None and not isinstance(diet, list):
         return jsonify({'success': False, 'message': 'Invalid diet'}), 400
@@ -115,10 +106,10 @@ def create_profile():
             cursor.execute(
                 """
                 UPDATE User
-                SET name = ?, bio = ?, interests = ?, bu_id = ?, preferred_language = ?
+                SET bio = ?, interests = ?, language = ?
                 WHERE user_id = ?
                 """,
-                (name, bio, interests, bu_id, language, user_id)
+                (bio, interests, language, user_id)
             )
             user_id = cursor.lastrowid
 
