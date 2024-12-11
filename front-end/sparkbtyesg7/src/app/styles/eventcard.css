@@ -1,3 +1,4 @@
+/* Event Card */
 .event-card {
   border: 1px solid #e0e0e0;
   padding: 20px;
@@ -19,12 +20,23 @@
   color: #333;
 }
 
-.event-description, .event-date, .event-location {
+.event-description,
+.event-date,
+.event-location {
   margin: 6px 0;
   color: #555;
   font-size: 1em;
 }
 
+.event-card-buttons {
+  display: flex; 
+  justify-content: flex-start; 
+  align-items: center; 
+  gap: 10px; 
+  margin-top: 15px; 
+}
+
+/* Button Styling */
 button {
   background-color: #007bff;
   color: white;
@@ -33,6 +45,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9em;
+  transition: background-color 0.2s ease;
 }
 
 button:hover {

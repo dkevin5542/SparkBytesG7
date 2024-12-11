@@ -1,8 +1,9 @@
 import React from "react";
 import "@/app/styles/eventCard.css";
+import "@/app/styles/rsvp-button.css"; // Import RSVP button styles
 import FavoriteButton from "./favorite_button";
+import RSVPButton from "./RSVPButton"; // Import RSVPButton
 import { useRouter } from "next/navigation";
-
 
 interface Event {
   event_id: number;
@@ -34,14 +35,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
     alert(`Event "${event.title}" added to favorites!`);
   };
 
-  const handleCardClick = () => {
-    router.push(`/rsvpform`); // Redirect to RSVP form
-  };
-
   return (
-    <div className="event-card"
-    onClick={handleCardClick} 
-    style={{ cursor: "pointer" }}>
+    <div className="event-card">
       <h3 className="event-title">{event.title}</h3>
       <p className="event-description">{event.description}</p>
       <p className="event-date">
@@ -68,16 +63,20 @@ export const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
       <p className="event-quantity">
         <strong>Quantity:</strong> {event.quantity}
       </p>
-
-      {/* Favorite Button */}
-      <FavoriteButton
-        eventId={event.event_id}
-        userId={userId}
-        onFavoriteSuccess={handleFavoriteSuccess}
-      />
+  
+      {/* RSVP and Favorite Buttons */}
+      <div className="event-card-buttons">
+        <RSVPButton eventId={event.event_id} />
+        <FavoriteButton
+          eventId={event.event_id}
+          userId={userId}
+          onFavoriteSuccess={handleFavoriteSuccess}
+        />
+      </div>
     </div>
   );
 };
 
 export default EventCard;
+
 

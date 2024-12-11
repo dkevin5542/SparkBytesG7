@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import "@/app/styles/favorite-button.css";
 
 interface FavoriteButtonProps {
   eventId: number;
@@ -8,7 +9,11 @@ interface FavoriteButtonProps {
   onFavoriteSuccess: () => void;
 }
 
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({ eventId, userId, onFavoriteSuccess }) => {
+const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+  eventId,
+  userId,
+  onFavoriteSuccess,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,18 +36,23 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ eventId, userId, onFavo
         throw new Error(errorData.message || "Failed to add to favorites.");
       }
 
-        onFavoriteSuccess();
-      } catch (err: any) {
-        console.error("Error favoriting event:", err);
-        setError(err.message || "An unexpected error occurred.");
-      } finally {
-        setLoading(false);
-      }
-    };
+      onFavoriteSuccess();
+    } catch (err: any) {
+      console.error("Error favoriting event:", err);
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <button onClick={handleFavorite} disabled={loading} aria-busy={loading} aria-label="Add event to favorites">
+    <div className="favorite-button-container">
+      <button
+        onClick={handleFavorite}
+        disabled={loading}
+        aria-busy={loading}
+        aria-label="Add event to favorites"
+      >
         {loading ? "Adding..." : "Add to Favorites"}
       </button>
       {error && <p className="error-message">{error}</p>}

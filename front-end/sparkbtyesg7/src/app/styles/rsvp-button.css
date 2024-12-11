@@ -1,0 +1,65 @@
+/* Container styling */
+.rsvp-container {
+    margin-top: 20px;
+  }
+  
+  .rsvp-container p {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  .rsvp-container p:first-child {
+    color: red; 
+  }
+  
+  .rsvp-container p:nth-child(2) {
+    color: green; 
+  }
+  
+  .rsvp-buttons {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .rsvp-buttons label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .rsvp-buttons select {
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  
+  .rsvp-buttons select:disabled {
+    cursor: not-allowed;
+    border-color: #ddd;
+  }
+  
+  /* Button styling */
+  .rsvp-buttons button {
+    margin-left: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: #0070f3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .rsvp-buttons button:hover {
+    background-color: #005bb5; 
+  }
+  
+  .rsvp-buttons button:disabled {
+    background-color: #cccccc; 
+    cursor: not-allowed;
+  }
+  
