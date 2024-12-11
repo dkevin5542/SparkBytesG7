@@ -4,6 +4,40 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/styles/createprofile.css';
 
+/**
+ * CreateProfile Component
+ *
+ * Provides a form for users to create their profile in the application.
+ * 
+ * Purpose:
+ * - Enables users to input their profile information, including name, bio, interests, BU ID, dietary preferences, and language.
+ * - Sends the profile data to the backend for creation and handles success or error responses.
+ * - Redirects the user to their profile page upon successful profile creation.
+ * 
+ * Features:
+ * - Form inputs for profile details.
+ * - Dynamic state updates for each input field to reflect the user's input.
+ * - Displays error messages for invalid inputs or backend issues.
+ * - Redirects the user to the profile page upon successful creation.
+ * 
+ * State:
+ * - 'profileData': Stores the current values for the profile fields.
+ * - 'errorMessage': Stores any error message to be displayed upon failure.
+ * 
+ * Functions:
+ * - 'handleChange': Updates the corresponding field in 'profileData' when a user inputs data.
+ * - 'handleDietChange': Adds or removes dietary preferences from the user's selections.
+ * - 'handleSubmit': Validates and submits the form data to the backend, handles API responses, and manages navigation or error display.
+ * 
+ * Usage:
+ * - This component is used on a profile creation page.
+ * - Requires a backend API endpoint to handle the submitted data.
+ * 
+ * Styling:
+ * - Uses custom styles from 'createprofile.css' for layout and design.
+ * - Includes a card-style layout for the profile creation form.
+ */
+
 const foodOptions = [
   "Vegetarian",
   "Vegan",
