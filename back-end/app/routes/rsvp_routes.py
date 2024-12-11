@@ -54,7 +54,7 @@ def rsvp_event():
             # Insert new RSVP
             cursor.execute(
                 """
-                INSERT INTO RSVP (user_id, event_id, rsvp_status)
+                INSERT INTO RSVP (user_id, event_id, status)
                 VALUES (?, ?, ?)
                 """,
                 (user_id, event_id, rsvp_status)

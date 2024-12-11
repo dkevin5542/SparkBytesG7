@@ -45,7 +45,7 @@ const RSVPButton: React.FC<RSVPButtonProps> = ({ eventId }) => {
       const data = await response.json();
       setSuccessMessage(data.message || 'RSVP successful!');
       setTimeout(() => {
-        router.push('/events');
+        router.push('/');
       }, 2000);
     } catch (error: any) {
       console.error('RSVP error:', error);
